@@ -32,6 +32,6 @@ services:
       -d /results
       -o /output
       -m gemma2
-      -b http://host.docker.internal:11434
+      -b http://172.18.0.1:11435
       -l 10
       --resume

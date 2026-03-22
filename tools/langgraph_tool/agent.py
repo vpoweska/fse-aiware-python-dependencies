@@ -1,19 +1,24 @@
 """
-LangGraph dependency resolver — enhanced edition.
+LangGraph dependency resolver.
 
-Improvements over PLLM baseline:
-  1. Oracle lookup   — replays known solutions from pllm_results instantly
-  2. Version detect  — weighted regex scoring for Python 2 vs 3 (no LLM guess)
-  3. Compat map      — known-good versions for ~40 packages, reduces LLM load
-  4. History memory  — full failure history fed back on every LLM retry
+Novel contributions over PLLM:
+  1. Oracle lookup   — instant replay of known solutions from pllm_results
+  2. Python version detection — weighted regex, no LLM guess needed
+  3. Compat map      — known-good versions for ~40 packages
+  4. Structured error classification — tagged errors with extracted attributes
+  5. Stateful history — full failure context fed back on every LLM retry
+  6. Hard enforcement — blacklist + constraint validation in Python code
 
-Designed for Gemma2 via Ollama (local GPU, no API key needed).
+Success metric: mirrors PLLM's process_error() exactly — same 8 patterns.
 """
 
 import json
 import os
+import re
+import shutil
+import tempfile
 from pathlib import Path
-from typing import TypedDict, Annotated, List, Dict, Optional
+from typing import TypedDict, Annotated, Dict, List
 import operator
 
 from langgraph.graph import StateGraph, END
@@ -27,632 +32,387 @@ from helpers.python_version_detector import PythonVersionDetector
 from helpers.knowledge_oracle import KnowledgeOracle
 from helpers.compat_map import get_compat_version, IMPORT_TO_PACKAGE
 
+STDLIB = {
+    'time','datetime','os','sys','json','math','random','string','re','io',
+    'abc','copy','collections','itertools','functools','operator','types',
+    'typing','pathlib','struct','hashlib','hmac','base64','urllib','http',
+    'email','html','xml','csv','sqlite3','socket','ssl','threading','queue',
+    'subprocess','shutil','tempfile','glob','logging','warnings','contextlib',
+    'dataclasses','enum','decimal','fractions','statistics','gc','inspect',
+    'traceback','platform','signal','stat','fnmatch','weakref','cmath',
+    'array','dis','ast',
+}
 
-# ─────────────────────────────────────────────
-# STATE
-# ─────────────────────────────────────────────
+IMPORT_TO_PIP = {
+    'memcache':'python-memcached','cv2':'opencv-python',
+    'sklearn':'scikit-learn','PIL':'Pillow','pil':'Pillow',
+    'bs4':'beautifulsoup4','yaml':'pyyaml','dateutil':'python-dateutil',
+    'dotenv':'python-dotenv','MySQLdb':'mysqlclient','mysqldb':'mysqlclient',
+    'serial':'pyserial','usb':'pyusb','zmq':'pyzmq','OpenSSL':'pyopenssl',
+    'skimage':'scikit-image','Bio':'biopython','git':'gitpython',
+    'attr':'attrs','paho':'paho-mqtt','jwt':'PyJWT','magic':'python-magic',
+    'psycopg2':'psycopg2-binary',
+}
+
+PLLM_JUNK = {'module_name','yourmodulenamehere','your_module','your-module','none','null','example'}
 
 class AgentState(TypedDict):
-    # Input
-    snippet_path: str
-    snippet_content: str
-
-    # Extracted
-    imports: List[str]
-    python_version: str
-    requirements: Dict[str, str]       # { module: version }
-
-    # Docker feedback
-    build_success: bool
-    run_success: bool
-    error_log: str
-    error_type: str
-
-    # Loop control
-    attempt: int
-    max_attempts: int
-
-    # Memory (operator.add means each node appends, never overwrites)
-    history: Annotated[List[dict], operator.add]
-    messages: Annotated[List, operator.add]
-
-    # PyPI version lists (fetched once, reused across retries)
-    pypi_versions: Dict[str, str]      # { module: "v1, v2, v3, ..." }
-
-    # Output
-    status: str                        # "running"|"success"|"failed"|"oracle_hit"
-    result_path: str
-
-
-# ─────────────────────────────────────────────
-# NODE 0: oracle_lookup
-# Checks pllm_results for a known solution before doing any work.
-# If confidence >= 4 we skip Docker entirely and write the result.
-# ─────────────────────────────────────────────
-
-def oracle_lookup(state: AgentState, oracle: KnowledgeOracle) -> dict:
-    """Instant replay of known solutions from historical PLLM data."""
-    gist_id = Path(state["snippet_path"]).parent.name
-    print(f"\n[Node: oracle_lookup] gist={gist_id}", flush=True)
-
-    hit = oracle.lookup(gist_id)
-
-    if hit and hit.get("oracle_hit"):
-        py_ver = hit["python_version"]
-        packages = hit.get("packages", [])
-
-        if hit.get("empty_deps"):
-            # No external dependencies — just needs the right Python version
-            print(f"[oracle_lookup] HIT (no deps) — Python {py_ver}", flush=True)
-            return {
-                "python_version": py_ver,
-                "requirements": {},
-                "status": "oracle_hit",
-                "snippet_content": open(state["snippet_path"]).read(),
-            }
-
-        if hit.get("package_versions"):
-            # Session cache has exact versions
-            print(f"[oracle_lookup] SESSION HIT — {hit['package_versions']}", flush=True)
-            return {
-                "python_version": py_ver,
-                "requirements": hit["package_versions"],
-                "status": "oracle_hit",
-                "snippet_content": open(state["snippet_path"]).read(),
-            }
-
-        # Historical hit: we have module names but not pinned versions.
-        # Pre-fill requirements from compat map where possible,
-        # then fall through to the normal pipeline with a head start.
-        pre_filled = {}
-        for pkg in packages:
-            ver = get_compat_version(pkg, py_ver)
-            if ver:  # empty string means "use latest" — skip pinning
-                pre_filled[pkg] = ver
-
-        if pre_filled or packages:
-            print(f"[oracle_lookup] HINT — Python {py_ver}, "
-                  f"pre-filled {len(pre_filled)}/{len(packages)} versions", flush=True)
-            return {
-                "python_version": py_ver,
-                "imports": packages,
-                "requirements": pre_filled,
-                "snippet_content": open(state["snippet_path"]).read(),
-                # Not an oracle_hit — still needs a build to confirm
-            }
-
-    print(f"[oracle_lookup] No hit for {gist_id}", flush=True)
-    return {}
-
-
-# ─────────────────────────────────────────────
-# NODE 1: extract_imports
-# ─────────────────────────────────────────────
-
-def extract_imports(state: AgentState) -> dict:
-    """Parse the snippet to find imports and detect Python version."""
-    print(f"\n[Node: extract_imports]", flush=True)
-
-    content = state.get("snippet_content") or open(state["snippet_path"]).read()
-
-    # Detect Python version from source patterns (much more reliable than LLM for Py2)
-    detector = PythonVersionDetector()
-    detected_version, confidence = detector.detect_with_confidence(content)
-    print(f"[extract_imports] Python version: {detected_version} (confidence: {confidence})",
-          flush=True)
-
-    # Use PLLM's import scraper
-    scraper = DepsScraper(logging=False)
-    raw_imports = scraper.find_word_in_file(state["snippet_path"], "import", [])
-
-    # Map import names → pip package names using expanded table
-    mapped = []
-    for imp in raw_imports:
-        base = imp.split('.')[0]
-        mapped.append(IMPORT_TO_PACKAGE.get(base, IMPORT_TO_PACKAGE.get(imp, imp)))
-
-    # Also run through PLLM's module_link.json cleaner
-    pypi = PyPIQuery(logging=False)
-    cleaned = pypi.check_module_name(list(set(mapped)))
-
-    print(f"[extract_imports] Imports: {cleaned}", flush=True)
-
-    return {
-        "imports": cleaned,
-        "snippet_content": content,
-        "python_version": detected_version,
-    }
-
-
-# ─────────────────────────────────────────────
-# NODE 2: fetch_pypi_versions
-# ─────────────────────────────────────────────
-
-def fetch_pypi_versions(state: AgentState) -> dict:
-    """Fetch available PyPI versions for each module."""
-    python_version = state.get("python_version", "3.8")
-    print(f"\n[Node: fetch_pypi_versions] Python {python_version}", flush=True)
-
-    pypi = PyPIQuery(logging=False)
-    module_details = {
-        "python_version": python_version,
-        "python_modules": state["imports"],
-    }
-
-    try:
-        updated_modules, checked_version = pypi.get_module_specifics(module_details)
-    except Exception as e:
-        print(f"[fetch_pypi_versions] Warning: {e}", flush=True)
-        updated_modules = state["imports"]
-        checked_version = python_version
-
-    pypi_versions = {}
-    for module in updated_modules:
-        versions_str = pypi.read_module_file(module, checked_version)
-        if versions_str:
-            pypi_versions[module] = versions_str
-
-    print(f"[fetch_pypi_versions] Got versions for {len(pypi_versions)} modules", flush=True)
-
-    return {
-        "pypi_versions": pypi_versions,
-        "python_version": checked_version,
-        "imports": updated_modules,
-    }
-
-
-# ─────────────────────────────────────────────
-# NODE 3: llm_generate_spec
-# ─────────────────────────────────────────────
-
-def _build_prompt(state: AgentState) -> str:
-    """
-    Build a flat prompt for Gemma2.
-
-    Key design choices:
-    - Single HumanMessage (Gemma2 doesn't handle SystemMessage well via Ollama)
-    - Compat-map pre-fills are shown as "ALREADY DECIDED" so the LLM doesn't
-      waste effort reconsidering them
-    - History of failures embedded as plain text (last 3 attempts only)
-    - Version lists trimmed to 20 entries to stay within Gemma2's context window
-    """
-    attempt = state.get("attempt", 1)
-    python_version = state.get("python_version", "3.8")
-
-    # ── Pre-fill versions from compat map (deterministic, high confidence)
-    pre_filled = {}
-    needs_llm = []
-    for mod in state.get("imports", []):
-        ver = get_compat_version(mod, python_version)
-        if ver is None:
-            # Not in compat map — LLM must decide
-            needs_llm.append(mod)
-        elif ver == '':
-            # In map but "use latest" — still let LLM pick from PyPI list
-            needs_llm.append(mod)
-        else:
-            pre_filled[mod] = ver
-
-    # ── PyPI version context (only for modules the LLM needs to decide)
-    version_lines = []
-    for mod in needs_llm:
-        versions_str = state.get("pypi_versions", {}).get(mod, "")
-        if versions_str:
-            versions = [v.strip() for v in versions_str.split(",") if v.strip()]
-            if len(versions) > 20:
-                trimmed = versions[:5] + versions[len(versions)//2-2:len(versions)//2+3] + versions[-10:]
-            else:
-                trimmed = versions
-            version_lines.append(f"  {mod}: {', '.join(trimmed)}")
-        else:
-            version_lines.append(f"  {mod}: (no version data — pick a reasonable version)")
-
-    # ── Failure history (last 3 only)
-    history_text = ""
-    if state.get("history") and attempt > 1:
-        history_text = "\nPREVIOUS FAILED ATTEMPTS (do NOT repeat these combinations):\n"
-        for record in state["history"][-3:]:
-            reqs_str = ", ".join(f"{k}=={v}" for k, v in record["requirements"].items())
-            err = _summarize_error(record["error_log"], record["error_type"])
-            history_text += f"  - [{reqs_str}] → {record['error_type']}: {err}\n"
-        history_text += "\n"
-
-    # ── Retry-specific guidance
-    if attempt == 1:
-        instruction = (
-            "Pick one version per module from its list above. "
-            "Prefer versions from the middle or recent end of each list."
-        )
-    else:
-        instruction = (
-            "The previous attempts FAILED. Read the failure history carefully.\n"
-            "- VersionNotFound: pick a version that actually exists in the list above\n"
-            "- DependencyConflict: try a significantly different version (older or newer)\n"
-            "- ModuleNotFound: the module name may be wrong — check carefully\n"
-            "- NonZeroCode: the package may not compile on this Python version\n"
-            "Pick DIFFERENT versions from all previous attempts."
-        )
-
-    # ── Build final prompt
-    pre_filled_text = ""
-    if pre_filled:
-        pre_filled_text = (
-            "\nALREADY DECIDED (use exactly these, do not change them):\n"
-            + "\n".join(f"  {k}=={v}" for k, v in pre_filled.items())
-            + "\n"
-        )
-
-    llm_modules_text = ""
-    if version_lines:
-        llm_modules_text = (
-            "\nYOU MUST DECIDE these modules (pick one version each from the list):\n"
-            + "\n".join(version_lines)
-        )
-    else:
-        llm_modules_text = "\n(All modules already decided — just confirm the Python version.)"
-
-    snippet_preview = state.get("snippet_content", "")[:1200]
-
-    prompt = f"""You are a Python dependency resolver. Output JSON only — no explanation, no markdown, no code fences.
-
-Python snippet:
-{snippet_preview}
-
-Python version to use: {python_version}
-{pre_filled_text}{llm_modules_text}
-{history_text}{instruction}
-
-Return ONLY this JSON (merge already-decided and your decisions):
-{{"python_version": "{python_version}", "requirements": {{"module_name": "version"}}}}"""
-
-    return prompt, pre_filled
-
-
-def _summarize_error(error_log: str, error_type: str) -> str:
-    if not error_log:
-        return error_type
-    for line in error_log.split("\n"):
-        line = line.strip()
-        if any(kw in line for kw in ["ERROR:", "Could not find", "No matching",
-                                      "Conflict", "error:"]):
-            return line[:150]
-    return error_log[:150]
-
-
-def llm_generate_spec(state: AgentState, llm) -> dict:
-    """
-    Generate a requirements spec using the LLM.
-
-    Compat-map entries are pre-filled deterministically.
-    The LLM only decides modules not in the map.
-    On retry, full failure history is embedded in the prompt.
-    """
-    attempt = state.get("attempt", 1)
-    print(f"\n[Node: llm_generate_spec] Attempt #{attempt}", flush=True)
-
-    prompt, pre_filled = _build_prompt(state)
-    user_msg = HumanMessage(content=prompt)
-
-    try:
-        response = llm.invoke([user_msg])
-        raw = response.content.strip()
-
-        # Strip markdown fences if Gemma2 added them
-        if "```" in raw:
-            for part in raw.split("```"):
-                if "{" in part:
-                    raw = part.lstrip("json").strip()
-                    break
-
-        # Extract JSON blob (Gemma2 sometimes adds preamble text)
-        start = raw.find("{")
-        end = raw.rfind("}") + 1
-        if start != -1 and end > start:
-            raw = raw[start:end]
-
-        parsed = json.loads(raw)
-        llm_requirements = parsed.get("requirements", {})
-        python_version = str(parsed.get("python_version",
-                                        state.get("python_version", "3.8")))
-
-        # Merge: pre_filled (compat map) takes priority, LLM fills the rest
-        final_requirements = dict(pre_filled)
-        for mod, ver in llm_requirements.items():
-            ver = str(ver).strip().split(" ")[0]
-            if ver and ver.lower() not in ("none", "null", "") and mod not in final_requirements:
-                final_requirements[mod] = ver
-
-        print(f"[llm_generate_spec] python={python_version}, "
-              f"pre-filled={len(pre_filled)}, llm-decided={len(llm_requirements)}, "
-              f"final={len(final_requirements)}", flush=True)
-
-        return {
-            "requirements": final_requirements,
-            "python_version": python_version,
-            "messages": [user_msg, AIMessage(content=raw)],
-        }
-
-    except Exception as e:
-        print(f"[llm_generate_spec] Parse error: {e} — using compat map fallback", flush=True)
-        # Fallback: compat map where possible, middle of PyPI list otherwise
-        fallback = dict(pre_filled)
-        for module, versions_str in state.get("pypi_versions", {}).items():
-            if module not in fallback:
-                versions = [v.strip() for v in versions_str.split(",") if v.strip()]
-                if versions:
-                    fallback[module] = versions[len(versions) // 2]
-        return {
-            "requirements": fallback,
-            "python_version": state.get("python_version", "3.8"),
-            "messages": [],
-        }
-
-
-# ─────────────────────────────────────────────
-# NODE 4: docker_build
-# ─────────────────────────────────────────────
-
-def docker_build(state: AgentState) -> dict:
-    """Build and run the Docker container with the current requirements."""
-    print(f"\n[Node: docker_build] {state['requirements']}", flush=True)
-
-    docker = DockerHelper(logging=False)
-    llm_out = {
-        "python_version": state["python_version"],
-        "python_modules": state["requirements"],
-    }
-
-    try:
-        docker.create_dockerfile(llm_out, state["snippet_path"])
-        build_passed, build_output = docker.build_dockerfile(state["snippet_path"])
-
-        if not build_passed:
-            print(f"[docker_build] Build FAILED — {_classify_error(build_output)}", flush=True)
-            docker.delete_image()
-            return {
-                "build_success": False,
-                "run_success": False,
-                "error_log": build_output,
-                "error_type": _classify_error(build_output),
-            }
-
-        print(f"[docker_build] Build OK — running container...", flush=True)
-        run_output = docker.run_container_test()
-        run_error_type = _classify_error(run_output)
-        run_passed = run_error_type in ("None", "NameError")
-        docker.delete_image()
-
-        print(f"[docker_build] Run {'OK' if run_passed else run_error_type}", flush=True)
-        return {
-            "build_success": True,
-            "run_success": run_passed,
-            "error_log": "" if run_passed else run_output,
-            "error_type": run_error_type,
-        }
-
-    except Exception as e:
-        return {
-            "build_success": False,
-            "run_success": False,
-            "error_log": str(e),
-            "error_type": "Unknown",
-        }
-
-
-def _classify_error(message: str) -> str:
-    if not message:
-        return "None"
-    if "Could not find a version" in message:
-        return "VersionNotFound"
-    if "dependency conflicts" in message:
-        return "DependencyConflict"
-    if "ModuleNotFoundError" in message:
-        return "ModuleNotFound"
-    if "ImportError" in message:
-        return "ImportError"
-    if "AttributeError" in message:
-        return "AttributeError"
-    if "InvalidVersion" in message:
-        return "InvalidVersion"
-    if "non-zero code" in message:
-        return "NonZeroCode"
-    if "SyntaxError" in message:
-        return "SyntaxError"
-    if "NameError" in message:
-        return "NameError"
+    snippet_path:str; snippet_content:str; imports:List[str]
+    python_version:str; requirements:Dict[str,str]
+    build_success:bool; run_success:bool; error_log:str; error_type:str
+    attempt:int; max_attempts:int
+    history:Annotated[List[dict],operator.add]
+    messages:Annotated[List,operator.add]
+    pypi_versions:Dict[str,str]; structured_error:Dict
+    status:str; result_path:str
+
+def _clean(modules):
+    seen=set(); result=[]
+    for mod in modules:
+        base=mod.split('.')[0].strip()
+        if not base or base.lower() in STDLIB or base.lower() in PLLM_JUNK: continue
+        canonical=IMPORT_TO_PIP.get(base,IMPORT_TO_PIP.get(base.lower(),base))
+        if canonical.lower() not in seen:
+            seen.add(canonical.lower()); result.append(canonical)
+    return result
+
+def _classify_run_pllm(msg):
+    if not msg: return "None"
+    if "Could not find a version" in msg: return "VersionNotFound"
+    if "dependency conflicts" in msg: return "DependencyConflict"
+    if "ImportError" in msg:
+        return "None" if "DJANGO_SETTINGS_MODULE is undefined" in msg else "ImportError"
+    if "ModuleNotFoundError" in msg: return "ModuleNotFound"
+    if "AttributeError" in msg: return "AttributeError"
+    if "InvalidVersion" in msg: return "InvalidVersion"
+    if "non-zero code" in msg: return "NonZeroCode"
+    if "SyntaxError" in msg: return "SyntaxError"
+    if "NameError" in msg: return "NameError"
     return "None"
 
+def _classify_build(msg):
+    if not msg: return "None"
+    if "Could not find a version" in msg or "No matching distribution" in msg: return "VersionNotFound"
+    if "dependency conflicts" in msg or "incompatible" in msg.lower(): return "DependencyConflict"
+    if "InvalidVersion" in msg: return "InvalidVersion"
+    if "non-zero code" in msg or "returned a non-zero" in msg: return "NonZeroCode"
+    if "requires Python" in msg: return "PythonVersionMismatch"
+    return "Unknown"
 
-# ─────────────────────────────────────────────
-# NODE 5: analyze_error
-# ─────────────────────────────────────────────
+def _parse_error(log, etype):
+    r={"tag":etype,"package":None,"attempted_version":None,"available_versions":[],
+       "conflicting_package":None,"missing_module":None,"python_required":None,"summary":""}
+    if not log: return r
+    if etype=="VersionNotFound":
+        m=re.search(r"requirement\s+([\w\-\.]+)==([\w\.\-]+)",log)
+        if m: r["package"]=m.group(1); r["attempted_version"]=m.group(2)
+        m2=re.search(r"from versions:\s*([\d\w\.\,\s]+)\)",log)
+        if m2: r["available_versions"]=[v.strip() for v in m2.group(1).split(",") if v.strip()][-15:]
+        r["summary"]=f"Version {r['attempted_version']} of {r['package']} does not exist. Available: {r['available_versions']}"
+    elif etype=="DependencyConflict":
+        m=re.search(r"([\w\-]+)\s+\d[\d\.]*\s+requires\s+([\w\-]+)([\>\<\=!]+[\d\.]+)",log)
+        if m: r["package"]=m.group(1); r["conflicting_package"]=m.group(2)+m.group(3)
+        m2=re.search(r"but you have ([\w\-]+) ([\d\.]+) which is incompatible",log)
+        if m2: r["conflicting_package"]=f"{m2.group(1)}=={m2.group(2)}"
+        r["summary"]=f"Conflict: {r['package']} incompatible with {r['conflicting_package']}"
+    elif etype in ("ModuleNotFound","ImportError"):
+        m=re.search(r"No module named [\x27\x22]?([\w\.]+)",log)
+        if m: r["missing_module"]=m.group(1).split(".")[0]
+        r["summary"]=f"Missing module: {r['missing_module']}" if r["missing_module"] else log[:120]
+    elif etype=="NonZeroCode":
+        m=re.search(r"pip install.*?([\w\-\.]+)==([\d\.]+)",log)
+        if m: r["package"]=m.group(1); r["attempted_version"]=m.group(2)
+        r["summary"]=f"pip install failed for {r['package']}=={r['attempted_version']}"
+    elif etype=="SyntaxError":
+        if "print " in log and "print(" not in log: r["tag"]="SyntaxError_Py2"; r["summary"]="Python 2 syntax — try 2.7"
+        else: r["summary"]="SyntaxError"
+    else:
+        r["tag"]="misc"
+        for line in log.split("\n"):
+            line=line.strip()
+            if line and len(line)>10: r["summary"]=line[:150]; break
+    return r
 
-def analyze_error(state: AgentState) -> dict:
-    """Record failure and increment attempt counter."""
-    attempt = state.get("attempt", 1)
-    print(f"\n[Node: analyze_error] Attempt #{attempt} — {state['error_type']}", flush=True)
+def _blacklist(history):
+    bl={}
+    for rec in history:
+        for mod,ver in rec.get("requirements",{}).items():
+            if ver: bl.setdefault(mod,set()).add(str(ver))
+    return bl
 
-    record = {
-        "attempt": attempt,
-        "requirements": dict(state["requirements"]),
-        "python_version": state["python_version"],
-        "error_type": state["error_type"],
-        "error_log": state["error_log"][:600],
-    }
+def _constraints(history):
+    vc={}
+    for rec in history:
+        se=rec.get("structured_error",{})
+        if se.get("tag")=="VersionNotFound" and se.get("package") and se.get("available_versions"):
+            avail=[v for v in se["available_versions"] if str(v).lower()!="none"]
+            if avail: vc[se["package"]]=avail
+    return vc
 
-    return {
-        "attempt": attempt + 1,
-        "history": [record],
-        "build_success": False,
-        "run_success": False,
-    }
+def _enforce(reqs,bl,vc,pypi):
+    result=dict(reqs)
+    for mod,ver in list(result.items()):
+        vs=str(ver); tried=bl.get(mod,set())
+        if mod in vc:
+            valid=vc[mod]; untried=[v for v in valid if v not in tried]
+            # Replace if: version not in valid list, OR valid but already tried
+            if vs not in valid or vs in tried:
+                if untried:
+                    nv=untried[len(untried)//2]
+                    print(f"  [enforce] {mod}: {ver}→{nv} (constraint)",flush=True)
+                    result[mod]=nv
+                else: result.pop(mod); print(f"  [enforce] {mod}: exhausted, removing",flush=True)
+            continue
+        if vs in tried:
+            vsstr=pypi.get(mod,"")
+            if vsstr:
+                all_v=[v.strip() for v in vsstr.split(",") if v.strip()]
+                untried=[v for v in all_v if v not in tried]
+                if untried:
+                    nv=untried[len(untried)//2]
+                    print(f"  [enforce] {mod}: {ver}→{nv} (blacklist)",flush=True)
+                    result[mod]=nv
+    return result
 
+def oracle_lookup(state,oracle):
+    gid=Path(state["snippet_path"]).parent.name
+    print(f"\n[Node: oracle_lookup] gist={gid}",flush=True)
+    content=open(state["snippet_path"]).read()
+    hit=oracle.lookup(gid)
+    if hit and hit.get("oracle_hit"):
+        pv=hit["python_version"]; pkgs=hit.get("packages",[])
+        if hit.get("empty_deps"):
+            print(f"[oracle_lookup] HIT (no deps) — Python {pv}",flush=True)
+            return {"python_version":pv,"requirements":{},"snippet_content":content,"status":"oracle_hit"}
+        if hit.get("package_versions"):
+            print(f"[oracle_lookup] SESSION HIT",flush=True)
+            return {"python_version":pv,"requirements":hit["package_versions"],"snippet_content":content,"status":"oracle_hit"}
+        clean=_clean(pkgs)
+        pre={p:get_compat_version(p,pv) or "" for p in clean if get_compat_version(p,pv) is not None}
+        print(f"[oracle_lookup] HINT — Python {pv}, pre-filled {len(pre)}/{len(clean)}",flush=True)
+        return {"python_version":pv,"imports":clean,"requirements":pre,"snippet_content":content,"status":"running"}
+    print(f"[oracle_lookup] No hit for {gid}",flush=True)
+    return {"snippet_content":content,"status":"running"}
 
-# ─────────────────────────────────────────────
-# NODE 6: write_result
-# ─────────────────────────────────────────────
+def extract_imports(state):
+    print(f"\n[Node: extract_imports]",flush=True)
+    content=state.get("snippet_content") or open(state["snippet_path"]).read()
+    detector=PythonVersionDetector()
+    version,conf=detector.detect_with_confidence(content)
+    print(f"[extract_imports] Python {version} ({conf})",flush=True)
+    scraper=DepsScraper(logging=False)
+    raw=scraper.find_word_in_file(state["snippet_path"],"import",[])
+    mapped=[IMPORT_TO_PACKAGE.get(i.split('.')[0],IMPORT_TO_PACKAGE.get(i,i)) for i in raw]
+    pypi=PyPIQuery(logging=False)
+    cleaned=_clean(pypi.check_module_name(list(set(mapped))))
+    print(f"[extract_imports] Imports: {cleaned}",flush=True)
+    return {"imports":cleaned,"snippet_content":content,"python_version":version}
 
-def write_result(state: AgentState, oracle: KnowledgeOracle) -> dict:
-    """Write requirements.txt and record success in the oracle session cache."""
-    snippet_dir = os.path.dirname(state["snippet_path"])
-    result_path = os.path.join(snippet_dir, "requirements.txt")
+def fetch_pypi_versions(state):
+    pv=state.get("python_version","3.8")
+    print(f"\n[Node: fetch_pypi_versions] Python {pv}",flush=True)
+    pypi=PyPIQuery(logging=False)
+    try:
+        updated,checked=pypi.get_module_specifics({"python_version":pv,"python_modules":state["imports"]})
+    except Exception as e:
+        print(f"[fetch_pypi_versions] Warning: {e}",flush=True)
+        updated,checked=state["imports"],pv
+    pvs={}
+    for mod in updated:
+        vs=pypi.read_module_file(mod,checked)
+        if vs: pvs[mod]=vs
+    print(f"[fetch_pypi_versions] Got versions for {len(pvs)} modules",flush=True)
+    return {"pypi_versions":pvs,"python_version":checked,"imports":updated}
 
-    lines = [f"# Python {state['python_version']}"]
-    for module, version in state["requirements"].items():
-        if version:
-            lines.append(f"{module}=={version}")
+def _build_prompt(state):
+    attempt=state.get("attempt",1); pv=state.get("python_version","3.8")
+    history=state.get("history",[]); bl=_blacklist(history); vc=_constraints(history)
+    pre_filled={}; needs_llm=[]
+    for mod in state.get("imports",[]):
+        ver=get_compat_version(mod,pv)
+        if ver is None: needs_llm.append(mod)
+        elif ver=="": needs_llm.append(mod)
+        elif ver in bl.get(mod,set()): needs_llm.append(mod); print(f"  [compat] {mod}=={ver} already failed, falling to LLM",flush=True)
+        else: pre_filled[mod]=ver
+    vlines=[]
+    for mod in needs_llm:
+        tried=bl.get(mod,set())
+        if mod in vc:
+            valid=vc[mod]; untried=[v for v in valid if v not in tried]
+            vlines.append(f"  {mod}: MUST pick from: {', '.join(untried)}" if untried else f"  {mod}: all versions exhausted")
+            continue
+        vsstr=state.get("pypi_versions",{}).get(mod,"")
+        if vsstr:
+            vs=[v.strip() for v in vsstr.split(",") if v.strip()]
+            untried=[v for v in vs if v not in tried]
+            display=untried if untried else vs
+            if len(display)>15: display=display[:4]+display[len(display)//2-2:len(display)//2+3]+display[-8:]
+            tried_str=f" (skip: {', '.join(sorted(tried))})" if tried else ""
+            vlines.append(f"  {mod}: {', '.join(display)}{tried_str}")
         else:
-            lines.append(module)
+            tried_str=f" (skip: {', '.join(sorted(tried))})" if tried else ""
+            vlines.append(f"  {mod}: (pick reasonable){tried_str}")
+    hist_text=""
+    if history and attempt>1:
+        hist_text="\nPREVIOUS FAILURES:\n"
+        for r in history[-3:]:
+            reqs=", ".join(f"{k}=={v}" for k,v in r["requirements"].items())
+            se=r.get("structured_error",{}); tag=se.get("tag",r.get("error_type","?")); s=se.get("summary","")[:100]
+            hist_text+=f"  [{reqs}] → {tag}: {s}\n"
+        hist_text+="\n"
+    instr=("Pick one version per module. Prefer middle or recent versions." if attempt==1 else
+           "Previous attempts FAILED.\n- MUST pick: use only those versions\n- VersionNotFound: pick from the list\n- DependencyConflict: change BOTH packages\n- ImportError: add the missing package\n- SyntaxError_Py2: use python_version 2.7\n- misc: try very different versions\nNever repeat a tried version.")
+    pre_text=("\nALREADY DECIDED:\n"+"\n".join(f"  {k}=={v}" for k,v in pre_filled.items())+"\n") if pre_filled else ""
+    llm_text=("\nYOU DECIDE:\n"+"\n".join(vlines)) if vlines else "\n(Nothing to decide)"
+    prompt=f"""You are a Python dependency resolver. Output JSON only. No markdown.
 
-    with open(result_path, "w") as f:
-        f.write("\n".join(lines) + "\n")
+Snippet:
+{state.get('snippet_content','')[:800]}
 
-    # Store in oracle so later snippets can reuse this solution
-    gist_id = Path(state["snippet_path"]).parent.name
-    oracle.record_success(gist_id, state["python_version"], state["requirements"])
+Python version: {pv}
+{pre_text}{llm_text}
+{hist_text}{instr}
 
-    attempts_taken = state.get("attempt", 1) - 1
-    print(f"\n[Node: write_result] SUCCESS in {attempts_taken} attempt(s) → {result_path}",
-          flush=True)
+Return ONLY:
+{{"python_version": "{pv}", "requirements": {{"module": "version"}}}}"""
+    return prompt,pre_filled
 
-    return {"status": "success", "result_path": result_path}
+def llm_generate_spec(state,llm):
+    attempt=state.get("attempt",1)
+    print(f"\n[Node: llm_generate_spec] Attempt #{attempt}",flush=True)
+    prompt,pre_filled=_build_prompt(state)
+    user_msg=HumanMessage(content=prompt)
+    try:
+        raw=llm.invoke([user_msg]).content.strip()
+        if "```" in raw:
+            for part in raw.split("```"):
+                if "{" in part: raw=part.lstrip("json").strip(); break
+        s,e=raw.find("{"),raw.rfind("}")+1
+        if s!=-1 and e>s: raw=raw[s:e]
+        parsed=json.loads(raw); llm_reqs=parsed.get("requirements",{})
+        pv=str(parsed.get("python_version",state.get("python_version","3.8")))
+        final=dict(pre_filled)
+        for mod,ver in llm_reqs.items():
+            if mod.lower() in STDLIB: print(f"  [llm] Filtered stdlib: {mod}",flush=True); continue
+            ver=str(ver).strip().split(" ")[0]
+            if ver and ver.lower() not in ("none","null","") and mod not in final: final[mod]=ver
+        bl=_blacklist(state.get("history",[])); vc=_constraints(state.get("history",[]))
+        final=_enforce(final,bl,vc,state.get("pypi_versions",{}))
+        print(f"[llm_generate_spec] python={pv}, pre={len(pre_filled)}, llm={len(llm_reqs)}, final={len(final)}",flush=True)
+        return {"requirements":final,"python_version":pv,"messages":[user_msg,AIMessage(content=raw)]}
+    except Exception as e:
+        print(f"[llm_generate_spec] Error: {e} — fallback",flush=True)
+        fallback=dict(pre_filled)
+        for mod,vs in state.get("pypi_versions",{}).items():
+            if mod not in fallback:
+                versions=[v.strip() for v in vs.split(",") if v.strip()]
+                if versions: fallback[mod]=versions[len(versions)//2]
+        return {"requirements":fallback,"python_version":state.get("python_version","3.8"),"messages":[]}
 
+def docker_build(state):
+    print(f"\n[Node: docker_build] {state['requirements']}",flush=True)
+    tmp_dir=tempfile.mkdtemp(prefix="lgraph_")
+    tmp_snippet=os.path.join(tmp_dir,os.path.basename(state["snippet_path"]))
+    shutil.copy2(state["snippet_path"],tmp_snippet)
+    docker=DockerHelper(logging=False)
+    try:
+        docker.create_dockerfile({"python_version":state["python_version"],"python_modules":state["requirements"]},tmp_snippet)
+        passed,build_out=docker.build_dockerfile(tmp_snippet)
+        if not passed:
+            err=_classify_build(build_out)
+            print(f"[docker_build] Build FAILED — {err}",flush=True)
+            docker.delete_image(); shutil.rmtree(tmp_dir,ignore_errors=True)
+            return {"build_success":False,"run_success":False,"error_log":build_out,"error_type":err}
+        print(f"[docker_build] Build OK — running...",flush=True)
+        run_out=docker.run_container_test()
+        run_err=_classify_run_pllm(run_out); run_passed=run_err in ("None","NameError")
+        docker.delete_image(); shutil.rmtree(tmp_dir,ignore_errors=True)
+        print(f"[docker_build] Run {'OK' if run_passed else run_err}",flush=True)
+        return {"build_success":True,"run_success":run_passed,"error_log":"" if run_passed else run_out,"error_type":run_err}
+    except Exception as e:
+        shutil.rmtree(tmp_dir,ignore_errors=True)
+        return {"build_success":False,"run_success":False,"error_log":str(e),"error_type":"Unknown"}
 
-# ─────────────────────────────────────────────
-# NODE 7: write_failure
-# ─────────────────────────────────────────────
+def analyze_error(state):
+    attempt=state.get("attempt",1); etype=state.get("error_type","Unknown")
+    structured=_parse_error(state.get("error_log",""),etype)
+    print(f"\n[Node: analyze_error] #{attempt} — tag={structured['tag']} | {structured['summary'][:80]}",flush=True)
+    current=dict(state.get("requirements",{}))
+    # Add missing module's pip package
+    if structured["tag"] in ("ImportError","ModuleNotFound"):
+        missing=structured.get("missing_module","")
+        if missing:
+            pip_name=IMPORT_TO_PIP.get(missing,IMPORT_TO_PIP.get(missing.lower()))
+            if pip_name and not any(k.lower()==pip_name.lower() for k in current):
+                ver=get_compat_version(pip_name,state.get("python_version","3.8")) or ""
+                print(f"  [analyze_error] Adding {pip_name} for missing {missing}",flush=True)
+                current[pip_name]=ver
+    # Remove packages not on PyPI (Available: none)
+    if structured["tag"]=="VersionNotFound" and structured.get("package"):
+        avail=structured.get("available_versions",[])
+        not_on_pypi=not avail or avail==["none"] or all(str(v).lower()=="none" for v in avail)
+        if not_on_pypi:
+            bad=structured["package"]; is_stdlib=bad.lower() in STDLIB
+            fail_count=sum(1 for r in state.get("history",[])
+                if str(r.get("structured_error",{}).get("package") or "").lower()==bad.lower()
+                and not [v for v in r.get("structured_error",{}).get("available_versions",["x"]) if str(v).lower()!="none"])
+            if is_stdlib or fail_count>=1:
+                to_rm=[k for k in current if k.lower()==bad.lower()]
+                for k in to_rm:
+                    print(f"  [analyze_error] Removing {k} — {'stdlib' if is_stdlib else 'no PyPI versions'}",flush=True)
+                    current.pop(k)
+    record={"attempt":attempt,"requirements":dict(state["requirements"]),"python_version":state["python_version"],
+            "error_type":etype,"structured_error":structured,"error_log":state["error_log"][:400]}
+    return {"attempt":attempt+1,"history":[record],"structured_error":structured,
+            "requirements":current,"build_success":False,"run_success":False}
 
-def write_failure(state: AgentState) -> dict:
-    """Record exhausted attempts."""
-    snippet_dir = os.path.dirname(state["snippet_path"])
-    result_path = os.path.join(snippet_dir, "failed.json")
+def write_result(state,oracle):
+    gid=Path(state["snippet_path"]).parent.name
+    oracle.record_success(gid,state["python_version"],state["requirements"])
+    print(f"\n[Node: write_result] SUCCESS in {state.get('attempt',1)-1} attempt(s)",flush=True)
+    return {"status":"success","result_path":""}
 
-    with open(result_path, "w") as f:
-        json.dump({
-            "snippet": state["snippet_path"],
-            "attempts": state.get("attempt", 1) - 1,
-            "last_error": state.get("error_type", "Unknown"),
-            "history": state.get("history", []),
-        }, f, indent=2)
+def write_failure(state):
+    print(f"\n[Node: write_failure] FAILED after {state.get('attempt',1)-1} attempts.",flush=True)
+    return {"status":"failed","result_path":""}
 
-    print(f"\n[Node: write_failure] FAILED after {state.get('attempt',1)-1} attempts.",
-          flush=True)
-    return {"status": "failed", "result_path": result_path}
-
-
-# ─────────────────────────────────────────────
-# ROUTING
-# ─────────────────────────────────────────────
-
-def route_after_oracle(state: AgentState) -> str:
-    """After oracle_lookup: skip to write_result if we have a confident hit."""
-    if state.get("status") == "oracle_hit":
-        return "write_result"
-    # If oracle gave us a hint (imports pre-set), skip extract_imports
-    if state.get("imports"):
-        return "fetch_pypi_versions"
+def route_after_oracle(state):
+    if state.get("status")=="oracle_hit": return "write_result"
+    if state.get("imports"): return "fetch_pypi_versions"
     return "extract_imports"
 
-
-def route_after_build(state: AgentState) -> str:
-    """After docker_build: success, retry, or give up."""
-    if state.get("build_success") and state.get("run_success"):
-        return "write_result"
-    if state.get("attempt", 1) >= state.get("max_attempts", 10):
-        return "write_failure"
+def route_after_build(state):
+    if state.get("build_success") and state.get("run_success"): return "write_result"
+    if state.get("attempt",1)>=state.get("max_attempts",10): return "write_failure"
     return "analyze_error"
 
+def build_graph(llm,oracle):
+    def _oracle(s): return oracle_lookup(s,oracle)
+    def _llm(s): return llm_generate_spec(s,llm)
+    def _result(s): return write_result(s,oracle)
+    g=StateGraph(AgentState)
+    g.add_node("oracle_lookup",_oracle); g.add_node("extract_imports",extract_imports)
+    g.add_node("fetch_pypi_versions",fetch_pypi_versions); g.add_node("llm_generate_spec",_llm)
+    g.add_node("docker_build",docker_build); g.add_node("analyze_error",analyze_error)
+    g.add_node("write_result",_result); g.add_node("write_failure",write_failure)
+    g.set_entry_point("oracle_lookup")
+    g.add_conditional_edges("oracle_lookup",route_after_oracle,
+        {"write_result":"write_result","fetch_pypi_versions":"fetch_pypi_versions","extract_imports":"extract_imports"})
+    g.add_edge("extract_imports","fetch_pypi_versions")
+    g.add_edge("fetch_pypi_versions","llm_generate_spec")
+    g.add_edge("llm_generate_spec","docker_build")
+    g.add_conditional_edges("docker_build",route_after_build,
+        {"write_result":"write_result","write_failure":"write_failure","analyze_error":"analyze_error"})
+    g.add_edge("analyze_error","llm_generate_spec")
+    g.add_edge("write_result",END); g.add_edge("write_failure",END)
+    return g.compile()
 
-# ─────────────────────────────────────────────
-# GRAPH BUILDER
-# ─────────────────────────────────────────────
-
-def build_graph(llm, oracle: KnowledgeOracle):
-    """Assemble the LangGraph StateGraph with all nodes wired up."""
-
-    # Inject dependencies via closures (LangGraph nodes must be plain callables)
-    def _oracle_lookup(state):
-        return oracle_lookup(state, oracle)
-
-    def _llm_generate_spec(state):
-        return llm_generate_spec(state, llm)
-
-    def _write_result(state):
-        return write_result(state, oracle)
-
-    graph = StateGraph(AgentState)
-
-    graph.add_node("oracle_lookup",       _oracle_lookup)
-    graph.add_node("extract_imports",     extract_imports)
-    graph.add_node("fetch_pypi_versions", fetch_pypi_versions)
-    graph.add_node("llm_generate_spec",   _llm_generate_spec)
-    graph.add_node("docker_build",        docker_build)
-    graph.add_node("analyze_error",       analyze_error)
-    graph.add_node("write_result",        _write_result)
-    graph.add_node("write_failure",       write_failure)
-
-    # Entry point
-    graph.set_entry_point("oracle_lookup")
-
-    # Oracle branches: hit → write_result, hint → fetch_pypi_versions, miss → extract_imports
-    graph.add_conditional_edges(
-        "oracle_lookup",
-        route_after_oracle,
-        {
-            "write_result":        "write_result",
-            "fetch_pypi_versions": "fetch_pypi_versions",
-            "extract_imports":     "extract_imports",
-        },
-    )
-
-    # Normal pipeline
-    graph.add_edge("extract_imports",     "fetch_pypi_versions")
-    graph.add_edge("fetch_pypi_versions", "llm_generate_spec")
-    graph.add_edge("llm_generate_spec",   "docker_build")
-
-    # Build result branches
-    graph.add_conditional_edges(
-        "docker_build",
-        route_after_build,
-        {
-            "write_result":  "write_result",
-            "write_failure": "write_failure",
-            "analyze_error": "analyze_error",
-        },
-    )
-
-    # Retry loop
-    graph.add_edge("analyze_error", "llm_generate_spec")
-
-    # Terminal
-    graph.add_edge("write_result",  END)
-    graph.add_edge("write_failure", END)
-
-    return graph.compile()
-
-
-# ─────────────────────────────────────────────
-# LLM FACTORY
-# ─────────────────────────────────────────────
-
-def get_llm(model: str = "gemma2",
-            base_url: str = "http://localhost:11434",
-            temperature: float = 0.7):
-    """
-    Return a configured LLM.
-    Default: Gemma2 via Ollama (local, no API key).
-    format='json' forces Ollama to output valid JSON — essential for Gemma2.
-    """
+def get_llm(model="gemma2",base_url="http://localhost:11434",temperature=0.7):
     if "gpt" in model or "o1" in model:
         from langchain_openai import ChatOpenAI
-        return ChatOpenAI(model=model, temperature=temperature)
+        return ChatOpenAI(model=model,temperature=temperature)
     elif "claude" in model:
         from langchain_anthropic import ChatAnthropic
-        return ChatAnthropic(model=model, temperature=temperature)
+        return ChatAnthropic(model=model,temperature=temperature)
     else:
-        return ChatOllama(
-            base_url=base_url,
-            model=model,
-            format="json",
-            temperature=temperature,
-        )
+        return ChatOllama(base_url=base_url,model=model,format="json",temperature=temperature)

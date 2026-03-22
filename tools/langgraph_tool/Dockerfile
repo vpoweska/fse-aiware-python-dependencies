@@ -13,8 +13,8 @@ ENV UNAME=${UNAME}
 
 RUN groupadd -g $GID $UNAME 2>/dev/null || true && \
     useradd -u $UID -g $GID -s /bin/bash -m $UNAME 2>/dev/null || true && \
-    (groupmod -g $DOCKER_GID docker 2>/dev/null || groupadd -g $DOCKER_GID dockerhost) && \
-    (usermod -aG docker $UNAME 2>/dev/null || usermod -aG dockerhost $UNAME)
+    groupadd -g $DOCKER_GID dockerhost 2>/dev/null || true && \
+    usermod -aG dockerhost $UNAME 2>/dev/null || true
 
 WORKDIR /app
 

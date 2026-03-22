@@ -72,12 +72,13 @@ def resolve_snippet(snippet_path: str, graph, max_attempts: int = 10) -> dict:
         "history":        [],
         "messages":       [],
         "pypi_versions":  {},
+        "structured_error": {},
         "status":         "running",
         "result_path":    "",
     }
 
     try:
-        final = graph.invoke(initial_state)
+        final = graph.invoke(initial_state, config={"recursion_limit": 200})
     except Exception as e:
         print(f"[run] Agent crashed: {e}", flush=True)
         traceback.print_exc()
@@ -160,8 +161,18 @@ def resolve_folder(args):
         print(f"  → {status_str}  |  running rate: {success_count}/{i+1} ({pct:.1f}%)",
               flush=True)
 
-        # Write YAML output next to snippet (PLLM-compatible)
-        _write_yaml(str(snippet_path.parent), result, py_ver)
+        # Write YAML and requirements.txt to output dir (gists is read-only)
+        yaml_out_dir = out_dir / snippet_id
+        yaml_out_dir.mkdir(parents=True, exist_ok=True)
+        _write_yaml(str(yaml_out_dir), result, py_ver)
+
+        # Write requirements.txt for successful runs
+        if result['success'] and result.get('requirements'):
+            req_path = yaml_out_dir / 'requirements.txt'
+            with open(req_path, 'w') as f:
+                f.write(f"# Python {py_ver}\n")
+                for mod, ver in result['requirements'].items():
+                    f.write(f"{mod}=={ver}\n" if ver else f"{mod}\n")
 
         # Append to CSV
         modules = result.get('requirements', {})

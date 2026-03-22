@@ -10,12 +10,9 @@ services:
         UID: ${UID:-1000}
         GID: ${GID:-1000}
         DOCKER_GID: ${DOCKER_GID:-999}
-      platforms:
-        - linux/amd64
     
     image: pllm:latest
     container_name: pllm-test
-    platform: linux/amd64
     
     networks:
       - pllm-network
@@ -41,17 +38,6 @@ services:
     # Optional: Add environment variables
     environment:
       - DOCKER_HOST=unix:///var/run/docker.sock
-  
-  ollama:
-    image: ollama/ollama:latest
-    container_name: ollama
-    restart: unless-stopped
-    
-    networks:
-      - pllm-network
-    
-    ports:
-      - "11434:11434"
     
     # Optional: Add environment variables
     environment:
