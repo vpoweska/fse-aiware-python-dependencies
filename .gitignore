@@ -164,3 +164,7 @@ dev/mlx-examples/
     
 Pipfile.lock
 GithubProjects/
+*.db
+*.sqlite
+__pycache__/
+*.pyc

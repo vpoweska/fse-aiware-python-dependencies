@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  pllm-plus:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        UNAME: ${USER:-appuser}
+        UID:   ${UID:-1000}
+        GID:   ${GID:-1000}
+
+    image: pllm-plus:latest
+    container_name: pllm-plus-test
+
+    networks:
+      - pllm-network
+
+    volumes:
+      # Docker-in-Docker: mount the host's Docker socket
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+      # Mount the gists dataset (two directories up from tools/my_tool/)
+      - ../../hard-gists:/gists:rw
+
+    working_dir: /app
+
+    stdin_open: true
+    tty: true
+
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+
+  # Share the same Ollama service as PLLM (both on the same network)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    networks:
+      - pllm-network
+    ports:
+      - "11434:11434"
+
+networks:
+  pllm-network:
+    driver: bridge
