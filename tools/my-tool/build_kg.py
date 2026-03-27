@@ -20,9 +20,11 @@ Optional arguments:
 """
 
 import argparse
+import glob
 import os
 import sqlite3
 import sys
+import tarfile
 
 # Add /app to path so helpers can be imported directly
 sys.path.insert(0, "/app")
@@ -33,6 +35,40 @@ from helpers.knowledge_graph import (
     DEFAULT_DB_PATH,
     RESULT_DIRS,
 )
+
+
+# ---------------------------------------------------------------------------
+# Archive extraction — handles tar.gz result archives before building the DB
+# ---------------------------------------------------------------------------
+
+def extract_archives(search_dir: str = "/gists") -> None:
+    """
+    Find any .tar.gz archives in `search_dir` and extract them in place,
+    but only if the extracted folder doesn't already exist.
+
+    e.g. /gists/pllm_results.tar.gz  →  /gists/pllm_results/
+    """
+    archives = glob.glob(os.path.join(search_dir, "*.tar.gz"))
+
+    if not archives:
+        print(f"[build_kg] No .tar.gz archives found in {search_dir}")
+        return
+
+    for archive_path in sorted(archives):
+        folder_name = os.path.basename(archive_path).replace(".tar.gz", "")
+        extract_to  = os.path.join(search_dir, folder_name)
+
+        if os.path.isdir(extract_to):
+            print(f"[build_kg] Already extracted: {folder_name}/ — skipping")
+            continue
+
+        print(f"[build_kg] Extracting {os.path.basename(archive_path)} …")
+        try:
+            with tarfile.open(archive_path, "r:gz") as tar:
+                tar.extractall(path=search_dir)
+            print(f"[build_kg] Extracted → {extract_to}")
+        except Exception as e:
+            print(f"[build_kg] Failed to extract {archive_path}: {e}")
 
 
 # ---------------------------------------------------------------------------
@@ -129,8 +165,12 @@ def main():
         print_stats(args.db)
         return
 
+    # ── Extract any tar.gz archives first ───────────────────────────────
+    gists_dir = os.path.dirname(args.db)   # e.g. /gists
+    extract_archives(search_dir=gists_dir)
+
     # ── Build ────────────────────────────────────────────────────────────
-    print(f"[build_kg] Building knowledge graph …")
+    print(f"\n[build_kg] Building knowledge graph …")
     print(f"  DB path     : {args.db}")
     print(f"  Result dirs : {args.results}\n")
 

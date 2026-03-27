@@ -169,3 +169,6 @@ GithubProjects/
 __pycache__/
 *.pyc
 *.DS_Store
+pllm_results/**/*.yml
+pyego-results/**/*.yml
+readpy-results/**/*.yml
