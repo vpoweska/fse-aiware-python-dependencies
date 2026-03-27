@@ -172,3 +172,5 @@ __pycache__/
 pllm_results/**/*.yml
 pyego-results/**/*.yml
 readpy-results/**/*.yml
+._hard-gists
+hard-gists/
