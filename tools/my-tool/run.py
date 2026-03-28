@@ -1,7 +1,6 @@
 """
 run.py
--------
-Entry Point — CLI equivalent of PLLM's test_executor.py
+Entry Point. Equivalent of PLLM's test_executor.py
 
 Usage (inside the container):
   python run.py -f /gists/0a2ac74d800a2eff9540/snippet.py \
@@ -10,9 +9,7 @@ Usage (inside the container):
                 -l 5 \
                 -p 3.8
 
-Results are appended to a single CSV file (default: /gists/results.csv)
-rather than writing a separate JSON file per snippet — making it easy to
-aggregate results across the whole dataset.
+Results are appended to a single CSV file (default: /gists/results.csv).
 
 CSV columns match PLLM's YAML output structure so comparison is straightforward:
   snippet_path, python_version, status, iterations, elapsed_seconds,
@@ -28,11 +25,6 @@ import time
 
 from agent import run_agent
 
-
-# ---------------------------------------------------------------------------
-# CSV output
-# ---------------------------------------------------------------------------
-
 CSV_COLUMNS = [
     "snippet_path",
     "python_version",
@@ -43,7 +35,6 @@ CSV_COLUMNS = [
     "requirements",        # JSON-encoded dict, e.g. '{"numpy": "1.21.0"}'
     "final_error_type",    # last error seen before success/failure
 ]
-
 
 def append_to_csv(result: dict, csv_path: str) -> None:
     """
@@ -69,11 +60,6 @@ def append_to_csv(result: dict, csv_path: str) -> None:
             "requirements":         json.dumps(result.get("requirements", {})),
             "final_error_type":     result.get("final_error_type", ""),
         })
-
-
-# ---------------------------------------------------------------------------
-# Argument parsing
-# ---------------------------------------------------------------------------
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -117,11 +103,6 @@ def parse_args():
     )
     return parser.parse_args()
 
-
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
-
 def main():
     args = parse_args()
     start_time = time.time()
@@ -150,15 +131,10 @@ def main():
         "final_error_type":     final_state.get("error_info", {}).get("error_type", ""),
     }
 
-    # ── Print summary to stdout ──────────────────────────────────────────
     print(json.dumps(result, indent=2))
-
-    # ── Append to shared CSV (no per-snippet JSON files) ────────────────
     append_to_csv(result, args.output)
     print(f"[run.py] Result appended to {args.output}")
-
     sys.exit(0 if final_state["status"] == "success" else 1)
-
 
 if __name__ == "__main__":
     main()

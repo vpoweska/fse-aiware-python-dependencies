@@ -1,50 +1,32 @@
 """
 helpers/knowledge_graph.py
-----------------------------
-Knowledge Graph — Improvement #1
+
+Knowledge Graph: Improvement #1
 
 Goal: Before we ever call the LLM, check whether we already KNOW a
       working combination of (package, version, python_version) from
-      historical experiment data (pllm_results/, pyego-results/, etc.).
+      historical experiment data (pllm_results/, pyego-results/, readpy-results/.).
 
 How it works:
   1. On first run, `build_db()` reads YAML result files from the training
      data folders and populates a local SQLite database.
   2. `query_working_versions(packages, python_version)` looks up the DB
      and returns versions that worked before for similar setups.
-  3. The agent calls this before hitting the LLM, saving time + API cost.
-
-SQLite is chosen deliberately:
-  - No extra dependencies (stdlib only).
-  - Fast for the small dataset we have (~2,900 snippets).
-  - Easy to inspect with any SQLite browser.
+  3. The agent calls this before hitting the LLM.
 """
 
 import sqlite3
 import os
 import glob
-import yaml   # pyyaml is already in the Dockerfile
+import yaml
 from typing import Optional
 
-# ---------------------------------------------------------------------------
-# Constants
-# ---------------------------------------------------------------------------
-
-# DB lives on the mounted /gists volume so it survives container restarts.
-# Build it once with build_kg.py; every subsequent run just reads it.
 DEFAULT_DB_PATH = "/gists/knowledge_graph.db"
-
-# Folders that hold historical results — all under the mounted /gists volume.
 RESULT_DIRS = [
     "/gists/pllm_results",
     "/gists/pyego-results",
     "/gists/readpy-results",
 ]
-
-
-# ---------------------------------------------------------------------------
-# Database setup
-# ---------------------------------------------------------------------------
 
 def _get_connection(db_path: str = DEFAULT_DB_PATH) -> sqlite3.Connection:
     """Open (and create if needed) the SQLite database."""
@@ -72,11 +54,6 @@ def init_db(db_path: str = DEFAULT_DB_PATH) -> None:
     """)
     conn.commit()
     conn.close()
-
-
-# ---------------------------------------------------------------------------
-# Ingestion — parse historical YAML result files and populate the DB
-# ---------------------------------------------------------------------------
 
 def build_db(result_dirs: list = RESULT_DIRS, db_path: str = DEFAULT_DB_PATH) -> int:
     """
@@ -161,11 +138,6 @@ def build_db(result_dirs: list = RESULT_DIRS, db_path: str = DEFAULT_DB_PATH) ->
     print(f"[KG] Ingested {inserted} records into {db_path}")
     return inserted
 
-
-# ---------------------------------------------------------------------------
-# Query — look up a candidate set of working versions
-# ---------------------------------------------------------------------------
-
 def query_working_versions(
     packages: list,
     python_version: str,
@@ -226,10 +198,6 @@ def coverage(packages: list, python_version: str, db_path: str = DEFAULT_DB_PATH
     return len(hits) / len(packages)
 
 
-# ---------------------------------------------------------------------------
-# Record a new success (called by the agent after a build succeeds)
-# ---------------------------------------------------------------------------
-
 def record_success(packages: dict, python_version: str, db_path: str = DEFAULT_DB_PATH) -> None:
     """
     After a successful build, store the winning (pkg, ver, py) triples so
@@ -247,19 +215,12 @@ def record_success(packages: dict, python_version: str, db_path: str = DEFAULT_D
     conn.commit()
     conn.close()
 
-
-# ---------------------------------------------------------------------------
-# Quick smoke-test
-# ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    # Build a tiny in-memory test without touching real data
     import tempfile
     with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as f:
         tmp_db = f.name
 
     init_db(tmp_db)
-
-    # Manually insert a fake record
     conn = sqlite3.connect(tmp_db)
     conn.execute("INSERT INTO working_packages (package, version, python_version) VALUES ('numpy', '1.21.0', '3.8')")
     conn.commit()

@@ -1,6 +1,6 @@
 """
 helpers/docker_runner.py
--------------------------
+
 Docker Build + Run Runner
 
 Mirrors PLLM's two-step process:
@@ -31,11 +31,6 @@ try:
 except ImportError:
     DOCKER_AVAILABLE = False
 
-
-# ---------------------------------------------------------------------------
-# Error strings that indicate a dependency problem at *runtime*
-# (mirrors the conditions PLLM checks in process_error / docker_create_process)
-# ---------------------------------------------------------------------------
 _DEPENDENCY_ERRORS = [
     "ModuleNotFoundError",
     "ImportError",
@@ -54,11 +49,6 @@ _ACCEPTABLE_RUNTIME_ERRORS = [
     "DJANGO_SETTINGS_MODULE is undefined",
 ]
 
-
-# ---------------------------------------------------------------------------
-# Public interface
-# ---------------------------------------------------------------------------
-
 def run_docker_build(
     snippet_path: str,
     python_version: str,
@@ -76,8 +66,8 @@ def run_docker_build(
     Returns
     -------
     (success: bool, log_output: str)
-      - success=True  → deps resolved (build ok + run ok / acceptable error)
-      - success=False → dependency problem; log contains the error for classifier
+      - success=True: deps resolved (build ok + run ok / acceptable error)
+      - success=False: dependency problem; log contains the error for classifier
     """
     if not DOCKER_AVAILABLE:
         print("[Docker] docker SDK not available — returning mock result")
@@ -89,7 +79,6 @@ def run_docker_build(
 
     try:
         with tempfile.TemporaryDirectory() as build_dir:
-            # ── Write build context ──────────────────────────────────────
             req_path = os.path.join(build_dir, "requirements.txt")
             _write_requirements(req_path, requirements)
 
@@ -100,7 +89,6 @@ def run_docker_build(
             dockerfile_path = os.path.join(build_dir, "Dockerfile")
             _write_dockerfile(dockerfile_path, python_version, snippet_name)
 
-            # ── Step 1: docker build ─────────────────────────────────────
             client = docker_sdk.from_env()
             print(f"[Docker] Building image {image_tag} (Python {python_version}) …")
 
@@ -129,10 +117,8 @@ def run_docker_build(
 
             print(f"[Docker] Build succeeded — running container …")
 
-            # ── Step 2: docker run ───────────────────────────────────────
             run_log = _run_container(client, image_tag, container_name)
 
-            # ── Step 3: evaluate run output (same logic as PLLM) ────────
             success = _evaluate_run_output(run_log)
 
             return success, run_log
@@ -142,13 +128,8 @@ def run_docker_build(
         return False, str(exc)
 
     finally:
-        # Always clean up image and container
         _cleanup(client, image_tag, container_name)
 
-
-# ---------------------------------------------------------------------------
-# Container execution
-# ---------------------------------------------------------------------------
 
 def _run_container(client, image_tag: str, container_name: str) -> str:
     """
@@ -175,7 +156,6 @@ def _run_container(client, image_tag: str, container_name: str) -> str:
         return logs.decode("utf-8", errors="replace")
 
     except docker_sdk.errors.ContainerError as exc:
-        # Container exited non-zero — still get the logs
         if container:
             try:
                 logs = container.logs()
@@ -191,19 +171,14 @@ def _run_container(client, image_tag: str, container_name: str) -> str:
             except Exception:
                 pass
 
-
-# ---------------------------------------------------------------------------
-# Success evaluation — mirrors PLLM's process_error() routing
-# ---------------------------------------------------------------------------
-
 def _evaluate_run_output(run_log: str) -> bool:
     """
     Decide whether the run counts as 'success' using the same rules as PLLM:
 
-      - Any dependency-level error  → False  (need another loop)
-      - NameError                   → True   (deps fine, script logic broken)
-      - DJANGO_SETTINGS_MODULE      → True   (known acceptable Django edge case)
-      - No recognised error         → True   (clean exit)
+      - Any dependency-level error  -> False  (need another loop)
+      - NameError                   -> True   (deps fine, script logic broken)
+      - DJANGO_SETTINGS_MODULE      -> True   (known acceptable Django edge case)
+      - No recognised error         -> True   (clean exit)
     """
     # Check acceptable non-dep errors first (PLLM sets run_complete=True for these)
     for acceptable in _ACCEPTABLE_RUNTIME_ERRORS:
@@ -217,14 +192,9 @@ def _evaluate_run_output(run_log: str) -> bool:
             print(f"[Docker] Run has dependency error ({dep_err!r}) — treating as failure")
             return False
 
-    # No errors detected → clean run
+    # No errors detected, clean run
     print("[Docker] Run completed cleanly — success")
     return True
-
-
-# ---------------------------------------------------------------------------
-# File writers
-# ---------------------------------------------------------------------------
 
 def _write_requirements(path: str, requirements: dict) -> None:
     # Guard against list being passed instead of dict (LLM fallback edge case)
@@ -254,11 +224,6 @@ def _write_dockerfile(path: str, python_version: str, snippet_name: str) -> None
     with open(path, "w") as f:
         f.write(content)
 
-
-# ---------------------------------------------------------------------------
-# Cleanup helper
-# ---------------------------------------------------------------------------
-
 def _cleanup(client, image_tag: str, container_name: str) -> None:
     if client is None:
         return
@@ -270,11 +235,6 @@ def _cleanup(client, image_tag: str, container_name: str) -> None:
         client.containers.get(container_name).remove(v=True, force=True)
     except Exception:
         pass
-
-
-# ---------------------------------------------------------------------------
-# Mock build (no Docker daemon available)
-# ---------------------------------------------------------------------------
 
 def _mock_build(requirements: dict) -> tuple[bool, str]:
     print("[Docker] MOCK BUILD — pretending success.")

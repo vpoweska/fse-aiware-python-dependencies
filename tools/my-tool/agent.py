@@ -1,64 +1,28 @@
 """
 agent.py
----------
-LangGraph Agent — PLLM Improved Baseline
 
-This file is the HEART of our tool.  It defines the full agentic pipeline
-using LangGraph's StateGraph, wiring together our three improvements:
+LangGraph Agent: PLLM Improved Baseline
 
-  Improvement #1 — Knowledge Graph lookup  (helpers/knowledge_graph.py)
-  Improvement #2 — Structured Error Classifier (helpers/error_classifier.py)
-  Improvement #3 — Multi-Agent Debate Loop  (helpers/multi_agent.py)
+This file defines the full agentic pipeline using LangGraph's StateGraph, wiring together our three improvements:
 
-===========================================================================
-HIGH-LEVEL FLOW  (read this before looking at the code)
-===========================================================================
+  Improvement #1: Knowledge Graph lookup  (helpers/knowledge_graph.py)
+  Improvement #2: Structured Error Classifier (helpers/error_classifier.py)
+  Improvement #3: Multi-Agent Debate Loop  (helpers/multi_agent.py)
 
-  [START]
-     │
-     ▼
-  extract_dependencies        ← parse the Python file for import names
-     │
-     ▼
-  knowledge_graph_lookup      ← query SQLite DB for known-good versions
-     │
-     ├─── enough coverage? ──YES──► docker_build  (skip LLM entirely!)
-     │                                   │
-     │                               success? ──YES──► [SUCCESS / END]
-     │                                   │
-     │                                  NO
-     │                                   │
-     │◄──────────────────────────────────┘
-     │
-    NO coverage (or KG build also failed)
-     │
-     ▼
-  classify_error              ← categorise the Docker error log
-     │
-     ▼
-  debate_loop                 ← Proposer → Critic → Decider (LLM × 3)
-     │
-     ▼
-  docker_build                ← try the new requirements
-     │
-     ├── success? ──YES──► record_success ──► [SUCCESS / END]
-     │
-     └── NO, iteration < max? ──YES──► classify_error  (loop back)
-     │
-     └── NO ──► [FAILED / END]
-
-===========================================================================
+Flow:
+[Start] -> Extract Dependencies -> Knowledge Graph Lookup -> (if good coverage) Docker Build -> Success
+                                │
+                                │
+                                └─ (if poor coverage) -> Debate Loop -> Docker Build -> Success / Loop
+If Docker Build fails, we classify the error and feed that back into the debate loop for a new proposal. We also track previous attempts to avoid repeating the same failed requirements.
 """
 
 import ast
 import os
 from typing import TypedDict, Annotated
 import operator
-
-# LangGraph imports
 from langgraph.graph import StateGraph, END
 
-# Our helper modules
 from helpers.knowledge_graph import (
     query_working_versions,
     coverage as kg_coverage,
@@ -69,11 +33,6 @@ from helpers.error_classifier import classify_error
 from helpers.multi_agent     import run_debate
 from helpers.docker_runner   import run_docker_build
 
-
-# ===========================================================================
-# 1.  STATE  — the shared memory passed between every node
-# ===========================================================================
-
 class AgentState(TypedDict):
     """
     Everything the agent needs to remember across nodes and iterations.
@@ -81,48 +40,25 @@ class AgentState(TypedDict):
     LangGraph passes this dict from node to node, and each node returns
     a partial update (only the keys it changed).
     """
-
-    # ── Input ────────────────────────────────────────────────────────────
     snippet_path:     str        # full path to the Python file, e.g. /gists/.../snippet.py
     python_version:   str        # initial Python version guess, e.g. "3.8"
-    model:            str        # Ollama model name, e.g. "gemma2"
-    ollama_base_url:  str        # Ollama endpoint, e.g. "http://ollama:11434"
+    model:            str        # Ollama model name, e.x. "gemma2"
+    ollama_base_url:  str        # Ollama endpoint, e.x. "http://ollama:11434"
     max_iterations:   int        # how many LLM retry loops are allowed
-
-    # ── Discovered during execution ──────────────────────────────────────
     packages:         list       # import names extracted from the snippet
     requirements:     dict       # current best {package: version} proposal
-
-    # ── Loop tracking ────────────────────────────────────────────────────
     iteration:        int        # how many LLM loops have run
     previous_attempts: list      # list of requirements dicts tried so far
-
-    # ── Error info ───────────────────────────────────────────────────────
     error_log:        str        # raw Docker build output (on failure)
     error_info:       dict       # structured output from classify_error()
-
-    # ── Status ───────────────────────────────────────────────────────────
     status:           str        # "running" | "success" | "failed"
     used_kg:          bool       # did the KG provide the requirements?
-
-
-# ===========================================================================
-# 2.  NODE FUNCTIONS  — each function is one step in the graph
-# ===========================================================================
-
-# ---------------------------------------------------------------------------
-# Node 1 — Extract Dependencies
-# ---------------------------------------------------------------------------
 
 def extract_dependencies(state: AgentState) -> dict:
     """
     Parse the snippet file and pull out all import names.
 
-    We use Python's built-in `ast` module for accuracy — this is more
-    reliable than regex and avoids calling the LLM for a simple task.
-
-    Example: given `import numpy as np; from pandas import DataFrame`
-    we return  packages = ["numpy", "pandas"]
+    We use Python's built-in `ast` module for accuracy.
     """
     print(f"\n[Node] extract_dependencies — file: {state['snippet_path']}")
 
@@ -136,13 +72,11 @@ def extract_dependencies(state: AgentState) -> dict:
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
                 for alias in node.names:
-                    # "import numpy.random" → top-level is "numpy"
                     packages.add(alias.name.split(".")[0])
             elif isinstance(node, ast.ImportFrom):
                 if node.module:
                     packages.add(node.module.split(".")[0])
 
-        # Filter out Python standard library names (very rough heuristic)
         stdlib_names = _get_stdlib_names()
         third_party = sorted(packages - stdlib_names)
 
@@ -153,17 +87,12 @@ def extract_dependencies(state: AgentState) -> dict:
         print(f"[Node] extract_dependencies error: {exc} — continuing with empty list")
         return {"packages": []}
 
-
-# ---------------------------------------------------------------------------
-# Node 2 — Knowledge Graph Lookup
-# ---------------------------------------------------------------------------
-
 def knowledge_graph_lookup(state: AgentState) -> dict:
     """
     Query the SQLite knowledge graph for known-good package versions.
 
-    If we get ≥ 70 % coverage of the required packages, we use those
-    versions directly — no LLM call needed (faster + cheaper).
+    If we get >= 70% coverage of the required packages, we use those
+    versions directly, no LLM call needed.
 
     Sets `used_kg = True` when we trust the KG result enough to skip the LLM.
     """
@@ -174,24 +103,15 @@ def knowledge_graph_lookup(state: AgentState) -> dict:
 
     kg_versions = query_working_versions(packages, python_version)
     cov = kg_coverage(packages, python_version) if packages else 0.0
-
     print(f"[Node] KG coverage: {cov:.0%}  ({len(kg_versions)}/{len(packages)} packages)")
 
-    # 70 % threshold: if we know most of the deps, use the KG directly
     use_kg = cov >= 0.70
-
-    # Merge: KG versions + "latest" for any gaps
     requirements = {pkg: kg_versions.get(pkg, "latest") for pkg in packages}
 
     return {
         "requirements": requirements,
         "used_kg":      use_kg,
     }
-
-
-# ---------------------------------------------------------------------------
-# Node 3 — Docker Build
-# ---------------------------------------------------------------------------
 
 def docker_build(state: AgentState) -> dict:
     """
@@ -202,8 +122,8 @@ def docker_build(state: AgentState) -> dict:
       2. Runs `docker build`.
       3. Returns (success: bool, log: str).
 
-    On success  → mark status = "success"
-    On failure  → store the error log for the classifier to read next.
+    On success: mark status = "success"
+    On failure: store the error log for the classifier to read next.
     """
     iteration = state.get("iteration", 0) + 1
     print(f"\n[Node] docker_build — iteration {iteration}")
@@ -216,56 +136,35 @@ def docker_build(state: AgentState) -> dict:
     )
 
     if success:
-        print("[Node] ✅ Docker build SUCCEEDED!")
+        print("[Node] Docker build SUCCEEDED!")
         return {
             "status":    "success",
             "error_log": "",
             "iteration": iteration,
         }
     else:
-        print(f"[Node] ❌ Docker build FAILED (iteration {iteration})")
+        print(f"[Node] Docker build FAILED (iteration {iteration})")
         return {
             "status":    "running",
             "error_log": log,
             "iteration": iteration,
-            # Append this attempt to the history so the LLM avoids repeating it
             "previous_attempts": state.get("previous_attempts", []) + [state["requirements"]],
         }
-
-
-# ---------------------------------------------------------------------------
-# Node 4 — Classify Error
-# ---------------------------------------------------------------------------
 
 def classify_error_node(state: AgentState) -> dict:
     """
     Turn the raw Docker error log into a structured dict.
 
     The structured dict is what our specialised LLM prompts are built from.
-    Much better than handing 200 lines of raw pip output to the LLM!
-
-    Example output:
-    {
-        "error_type": "no_matching_distribution",
-        "package":    "numpy",
-        "version":    "99.0",
-        "constraint": None,
-        "raw_snippet": "... last 800 chars of log ..."
-    }
     """
     print(f"\n[Node] classify_error")
     error_info = classify_error(state.get("error_log", ""))
     print(f"[Node] Error classified as: {error_info['error_type']} | package: {error_info.get('package')}")
     return {"error_info": error_info}
 
-
-# ---------------------------------------------------------------------------
-# Node 5 — Multi-Agent Debate Loop
-# ---------------------------------------------------------------------------
-
 def debate_loop(state: AgentState) -> dict:
     """
-    Run the Proposer → Critic → Decider debate to get a new requirements dict.
+    Run the Proposer -> Critic -> Decider debate to get a new requirements dict.
 
     All three roles share the same context:
       - Which packages are needed.
@@ -286,16 +185,11 @@ def debate_loop(state: AgentState) -> dict:
         base_url=state.get("ollama_base_url", "http://localhost:11434"),
     )
 
-    # `requirements` in the proposal uses the key "requirements"
     new_requirements = final_proposal.get("requirements", state.get("requirements", {}))
     print(f"[Node] New requirements from debate: {new_requirements}")
 
     return {"requirements": new_requirements}
 
-
-# ---------------------------------------------------------------------------
-# Node 6 — Record Success
-# ---------------------------------------------------------------------------
 
 def record_success_node(state: AgentState) -> dict:
     """
@@ -307,28 +201,18 @@ def record_success_node(state: AgentState) -> dict:
         packages=state.get("requirements", {}),
         python_version=state["python_version"],
     )
-    return {"status": "success"}   # no state change needed
-
-
-# ---------------------------------------------------------------------------
-# Node 7 — Mark Failed
-# ---------------------------------------------------------------------------
+    return {"status": "success"}
 
 def mark_failed(state: AgentState) -> dict:
     """Terminal node — called when max iterations are exhausted."""
     print(f"\n[Node] mark_failed — giving up after {state.get('iteration')} iterations")
     return {"status": "failed"}
 
-
-# ===========================================================================
-# 3.  CONDITIONAL EDGES  — routing logic between nodes
-# ===========================================================================
-
 def route_after_kg_lookup(state: AgentState) -> str:
     """
     After the KG lookup, decide the next step:
-      - If KG coverage is good → try the docker build right away.
-      - Otherwise → go straight to the debate loop (need LLM help).
+      - If KG coverage is good, try the docker build right away.
+      - Otherwise go straight to the debate loop (need LLM help).
     """
     if state.get("used_kg", False):
         print("[Router] KG coverage sufficient — attempting direct Docker build")
@@ -341,9 +225,9 @@ def route_after_kg_lookup(state: AgentState) -> str:
 def route_after_docker_build(state: AgentState) -> str:
     """
     After a Docker build attempt, decide next step:
-      - success         → record it and finish.
-      - failure + room  → classify the error and loop.
-      - failure + limit → give up.
+      - success: record it and finish.
+      - failure + room: classify the error and loop.
+      - failure + limit: give up.
     """
     if state.get("status") == "success":
         return "record_success"
@@ -354,21 +238,11 @@ def route_after_docker_build(state: AgentState) -> str:
 
     return "classify_error"
 
-
-# ===========================================================================
-# 4.  GRAPH ASSEMBLY
-# ===========================================================================
-
 def build_graph() -> StateGraph:
     """
     Wire all nodes and edges together into a LangGraph StateGraph.
-
-    Think of this as drawing the flowchart — nodes are boxes, edges are
-    arrows.  Conditional edges are the decision diamonds.
     """
     graph = StateGraph(AgentState)
-
-    # ── Register nodes ──────────────────────────────────────────────────
     graph.add_node("extract_dependencies",  extract_dependencies)
     graph.add_node("knowledge_graph_lookup", knowledge_graph_lookup)
     graph.add_node("docker_build",          docker_build)
@@ -377,17 +251,14 @@ def build_graph() -> StateGraph:
     graph.add_node("record_success",        record_success_node)
     graph.add_node("mark_failed",           mark_failed)
 
-    # ── Entry point ──────────────────────────────────────────────────────
     graph.set_entry_point("extract_dependencies")
 
-    # ── Linear edges ─────────────────────────────────────────────────────
     graph.add_edge("extract_dependencies",  "knowledge_graph_lookup")
     graph.add_edge("classify_error",        "debate_loop")
     graph.add_edge("debate_loop",           "docker_build")
     graph.add_edge("record_success",        END)
     graph.add_edge("mark_failed",           END)
 
-    # ── Conditional edges (decision points) ─────────────────────────────
     graph.add_conditional_edges(
         "knowledge_graph_lookup",
         route_after_kg_lookup,
@@ -409,11 +280,6 @@ def build_graph() -> StateGraph:
 
     return graph
 
-
-# ===========================================================================
-# 5.  PUBLIC API — compile and run the agent
-# ===========================================================================
-
 def run_agent(
     snippet_path: str,
     python_version: str  = "3.8",
@@ -431,7 +297,7 @@ def run_agent(
     # Build/refresh the KG on first run (skips if DB already exists)
     _maybe_build_kg()
 
-    # Compile the graph once (this is cheap)
+    # Compile the graph once
     app = build_graph().compile()
 
     # Seed the initial state
@@ -469,14 +335,9 @@ def run_agent(
 
     return final_state
 
-
-# ===========================================================================
-# 6.  INTERNAL UTILITIES
-# ===========================================================================
-
 def _maybe_build_kg() -> None:
     """
-    Check that the knowledge graph DB exists — never build it at test time.
+    Check that the knowledge graph DB exists. Never build it at test time.
 
     The DB should be built once before testing using build_kg.py:
         python build_kg.py

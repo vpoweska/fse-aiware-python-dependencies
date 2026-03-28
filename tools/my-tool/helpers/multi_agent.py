@@ -1,20 +1,20 @@
 """
 helpers/multi_agent.py
------------------------
-Multi-Agent Debate Loop — Improvement #3
+
+Multi-Agent Debate Loop: Improvement #3
 
 Instead of asking the LLM once "fix my requirements", we run a small
 debate between three specialised roles:
 
-  1. Proposer  — suggests a candidate requirements.txt
-  2. Critic    — reviews the proposal and lists problems (JSON output)
-  3. Decider   — picks the best proposal (or refines further)
+  1. Proposer: suggests a candidate requirements.txt
+  2. Critic: reviews the proposal and lists problems (JSON output)
+  3. Decider: picks the best proposal (or refines further)
 
 Why does this help?
   - The Critic often catches obvious mistakes BEFORE a Docker build,
     saving several minutes per iteration.
   - The Decider can merge insights from multiple proposals.
-  - Each role gets a *focused* prompt → better output.
+  - Each role gets a *focused* prompt -> better output.
 
 All three roles call the same Ollama endpoint but with different prompts.
 The `call_llm` function is kept as a thin wrapper so it's easy to swap
@@ -26,11 +26,6 @@ import re
 import requests
 from typing import Optional
 
-
-# ---------------------------------------------------------------------------
-# Low-level LLM call (thin wrapper around the Ollama /api/generate endpoint)
-# ---------------------------------------------------------------------------
-
 def call_llm(
     prompt: str,
     model: str = "gemma2",
@@ -39,9 +34,6 @@ def call_llm(
 ) -> str:
     """
     Send a prompt to Ollama and return the text response.
-
-    If Ollama is unreachable (e.g. during unit tests) this returns a
-    hard-coded placeholder so the rest of the pipeline keeps running.
     """
     try:
         response = requests.post(
@@ -52,7 +44,7 @@ def call_llm(
                 "stream": False,
                 "options": {"temperature": temperature},
             },
-            timeout=120,  # Docker builds can be slow; give LLM time to think
+            timeout=120,
         )
         response.raise_for_status()
         return response.json().get("response", "").strip()
@@ -62,10 +54,6 @@ def call_llm(
         print(f"[LLM] Ollama call failed ({exc}) — returning placeholder")
         return '{"requirements": [], "reasoning": "LLM unavailable"}'
 
-
-# ---------------------------------------------------------------------------
-# Role 1 — Proposer
-# ---------------------------------------------------------------------------
 
 def propose_requirements(
     packages: list,
@@ -85,7 +73,6 @@ def propose_requirements(
         "reasoning":      "Chose numpy 1.21 because ..."
     }
     """
-    # Build a short history of what we already tried (to avoid repetition)
     history_text = ""
     if previous_attempts:
         history_text = "Previous failed attempts (DO NOT repeat these):\n"
@@ -121,11 +108,6 @@ Respond with ONLY valid JSON in this exact format (no markdown, no preamble):
         "requirements":   {p: "latest" for p in packages},
         "reasoning":      "LLM parse failed — using latest",
     })
-
-
-# ---------------------------------------------------------------------------
-# Role 2 — Critic
-# ---------------------------------------------------------------------------
 
 def critique_proposal(
     proposal: dict,
@@ -173,11 +155,6 @@ Respond with ONLY valid JSON (no markdown):
         "score":    5,
         "approved": True,   # allow pipeline to continue
     })
-
-
-# ---------------------------------------------------------------------------
-# Role 3 — Decider
-# ---------------------------------------------------------------------------
 
 def decide_best_proposal(
     proposal: dict,
@@ -227,11 +204,6 @@ Respond with ONLY valid JSON (no markdown):
     raw = call_llm(prompt, model=model, base_url=base_url, temperature=0.5)
     return _safe_parse_json(raw, fallback=proposal)   # fall back to original if parse fails
 
-
-# ---------------------------------------------------------------------------
-# Convenience wrapper — run the full debate in one call
-# ---------------------------------------------------------------------------
-
 def run_debate(
     packages: list,
     python_version: str,
@@ -241,7 +213,7 @@ def run_debate(
     base_url: str = "http://localhost:11434",
 ) -> dict:
     """
-    Orchestrates Proposer → Critic → Decider and returns a final proposal.
+    Orchestrates Proposer -> Critic -> Decider and returns a final proposal.
 
     This is the function the agent node calls.
     """
@@ -256,11 +228,6 @@ def run_debate(
     final = decide_best_proposal(proposal, critique, packages, python_version, model, base_url)
 
     return final
-
-
-# ---------------------------------------------------------------------------
-# Internal helpers
-# ---------------------------------------------------------------------------
 
 def _error_hint(error_info: dict) -> str:
     """Return a human-readable hint based on the error category."""
@@ -288,10 +255,6 @@ def _safe_parse_json(text: str, fallback: dict) -> dict:
         print(f"[LLM] Could not parse JSON from response:\n{text[:200]}")
         return fallback
 
-
-# ---------------------------------------------------------------------------
-# Smoke-test (requires no Ollama — uses the fallback path)
-# ---------------------------------------------------------------------------
 if __name__ == "__main__":
     result = run_debate(
         packages=["numpy", "pandas"],

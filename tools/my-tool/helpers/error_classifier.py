@@ -1,7 +1,7 @@
 """
 helpers/error_classifier.py
------------------------------
-Structured Error Classifier — Improvement #2
+
+Structured Error Classifier: Improvement #2
 
 Instead of dumping raw Docker build logs into the LLM, this module:
   1. Reads the error text and decides WHAT TYPE of problem occurred.
@@ -9,21 +9,16 @@ Instead of dumping raw Docker build logs into the LLM, this module:
   3. Returns a tidy dict so the LLM gets a focused, structured prompt later.
 
 Error categories we detect:
-  - version_conflict          e.g. "package A requires X>=2 but B requires X<1"
-  - no_matching_distribution  e.g. "No matching distribution found for numpy==99"
-  - missing_system_dep        e.g. "fatal error: libssl not found"
-  - python_version_mismatch   e.g. "Requires-Python >=3.9, we have 3.7"
-  - module_not_found          e.g. "ModuleNotFoundError: No module named 'foo'"
+  - version_conflict          e.x. "package A requires X>=2 but B requires X<1"
+  - no_matching_distribution  e.x. "No matching distribution found for numpy==99"
+  - missing_system_dep        e.x. "fatal error: libssl not found"
+  - python_version_mismatch   e.x. "Requires-Python >=3.9, we have 3.7"
+  - module_not_found          e.x. "ModuleNotFoundError: No module named 'foo'"
   - unknown                   fallback when nothing matches
 """
 
 import re
 from typing import Optional
-
-
-# ---------------------------------------------------------------------------
-# Public interface
-# ---------------------------------------------------------------------------
 
 def classify_error(error_log: str) -> dict:
     """
@@ -60,10 +55,6 @@ def classify_error(error_log: str) -> dict:
         "raw_snippet": _trim_log(error_log),
     }
 
-
-# ---------------------------------------------------------------------------
-# Private detectors  (one per error category)
-# ---------------------------------------------------------------------------
 
 def _detect_version_conflict(log: str) -> Optional[dict]:
     """
@@ -104,7 +95,6 @@ def _detect_no_matching_distribution(log: str) -> Optional[dict]:
             "constraint": None,
         }
 
-    # Alternative phrasing
     match = re.search(
         r"Could not find a version that satisfies the requirement ([\w\-\.]+)((?:[><=!]+[\d\.]+)*)",
         log, re.IGNORECASE
@@ -182,19 +172,10 @@ def _detect_module_not_found(log: str) -> Optional[dict]:
         }
     return None
 
-
-# ---------------------------------------------------------------------------
-# Utility
-# ---------------------------------------------------------------------------
-
 def _trim_log(log: str, max_chars: int = 800) -> str:
     """Return the last `max_chars` characters of the log (most informative part)."""
     return log[-max_chars:].strip()
 
-
-# ---------------------------------------------------------------------------
-# Quick smoke-test (run this file directly to verify)
-# ---------------------------------------------------------------------------
 if __name__ == "__main__":
     sample_logs = [
         "ERROR: No matching distribution found for numpy==99.0",

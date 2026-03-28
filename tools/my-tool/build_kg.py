@@ -1,12 +1,12 @@
 """
 build_kg.py
-------------
+
 One-time Knowledge Graph Builder
 
 Run this ONCE before starting your test run to populate the SQLite knowledge
-graph from the historical training data (pllm_results/, pyego-results/, etc.).
+graph from the historical training data (pllm_results/, pyego-results/, readpy-results/.).
 
-The DB is written to /gists/knowledge_graph.db — inside the mounted volume —
+The DB is written to /gists/knowledge_graph.db, inside the mounted volume,
 so it persists across container restarts and never needs to be rebuilt unless
 you want to refresh it with new training data.
 
@@ -26,7 +26,6 @@ import sqlite3
 import sys
 import tarfile
 
-# Add /app to path so helpers can be imported directly
 sys.path.insert(0, "/app")
 
 from helpers.knowledge_graph import (
@@ -36,17 +35,10 @@ from helpers.knowledge_graph import (
     RESULT_DIRS,
 )
 
-
-# ---------------------------------------------------------------------------
-# Archive extraction — handles tar.gz result archives before building the DB
-# ---------------------------------------------------------------------------
-
 def extract_archives(search_dir: str = "/gists") -> None:
     """
     Find any .tar.gz archives in `search_dir` and extract them in place,
     but only if the extracted folder doesn't already exist.
-
-    e.g. /gists/pllm_results.tar.gz  →  /gists/pllm_results/
     """
     archives = glob.glob(os.path.join(search_dir, "*.tar.gz"))
 
@@ -70,10 +62,6 @@ def extract_archives(search_dir: str = "/gists") -> None:
         except Exception as e:
             print(f"[build_kg] Failed to extract {archive_path}: {e}")
 
-
-# ---------------------------------------------------------------------------
-# Stats helper — shows what's in the DB without rebuilding
-# ---------------------------------------------------------------------------
 
 def print_stats(db_path: str) -> None:
     if not os.path.isfile(db_path):
@@ -108,11 +96,6 @@ def print_stats(db_path: str) -> None:
 
     conn.close()
 
-
-# ---------------------------------------------------------------------------
-# Argument parsing
-# ---------------------------------------------------------------------------
-
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Build the PLLM++ knowledge graph from historical training data"
@@ -140,36 +123,25 @@ def parse_args():
     )
     return parser.parse_args()
 
-
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
-
 def main():
     args = parse_args()
 
-    # ── Stats-only mode ──────────────────────────────────────────────────
     if args.stats:
         print_stats(args.db)
         return
 
-    # ── Force rebuild: delete existing DB ───────────────────────────────
     if args.force and os.path.isfile(args.db):
         print(f"[build_kg] --force: deleting existing DB at {args.db}")
         os.remove(args.db)
 
-    # ── Skip if DB already exists (normal behaviour) ─────────────────────
     if os.path.isfile(args.db):
         print(f"[build_kg] Database already exists at {args.db}")
         print("[build_kg] Nothing to do. Use --force to rebuild, or --stats to inspect.")
         print_stats(args.db)
         return
 
-    # ── Extract any tar.gz archives first ───────────────────────────────
     gists_dir = os.path.dirname(args.db)   # e.g. /gists
     extract_archives(search_dir=gists_dir)
-
-    # ── Build ────────────────────────────────────────────────────────────
     print(f"\n[build_kg] Building knowledge graph …")
     print(f"  DB path     : {args.db}")
     print(f"  Result dirs : {args.results}\n")
