@@ -227,13 +227,15 @@ def _evaluate_run_output(run_log: str) -> bool:
 # ---------------------------------------------------------------------------
 
 def _write_requirements(path: str, requirements: dict) -> None:
+    # Guard against list being passed instead of dict (LLM fallback edge case)
+    if not isinstance(requirements, dict):
+        requirements = {}
     with open(path, "w") as f:
         for pkg, ver in requirements.items():
             if ver and str(ver).lower() not in ("latest", "none", ""):
                 f.write(f"{pkg}=={ver}\n")
             else:
                 f.write(f"{pkg}\n")
-
 
 def _write_dockerfile(path: str, python_version: str, snippet_name: str) -> None:
     content = textwrap.dedent(f"""\

@@ -1,0 +1,548 @@
+snippet_path,python_version,status,iterations,elapsed_seconds,used_knowledge_graph,requirements,final_error_type
+/gists/00056d4304c58a035c87cdf5ff1e5e3e/snippet.py,3.8,success,2,23.43,True,"{""scrapy"": ""2.5.1""}",unknown
+/gists/000eccf3d66540d75def/snippet.py,3.8,success,1,19.71,False,{},
+/gists/00135b0dfee0ae165ad2/snippet.py,3.8,failed,5,58.02,True,"{""PyQt5"": ""5.15.8"", ""sip"": ""4.20.8"", ""maya"": ""2023"", ""maya.cmds"": ""*"", ""maya.mel"": ""*""}",unknown
+/gists/005bbad123ef309a5bef/snippet.py,3.8,failed,5,72.46,False,"{""requests"": ""2.28.1""}",unknown
+/gists/005ceac0483fc5a581cc/snippet.py,3.8,failed,5,81.82,False,"{""requests"": ""2.28.1""}",unknown
+/gists/00a17b1d374dfc267a9a/snippet.py,3.8,failed,5,79.68,False,"{""requests"": ""2.28.1""}",unknown
+/gists/00a4835bf36513ca58a3/snippet.py,3.8,failed,5,53.97,False,"{""c4d"": ""latest""}",no_matching_distribution
+/gists/00e9638c0efad1adac878522cf172484/snippet.py,3.8,failed,5,65.59,True,"{""gym"": ""0.21.0"", ""keras"": ""2.8.0"", ""numpy"": ""1.23.5"", ""tensorflow"": ""2.9.1""}",version_conflict
+/gists/011004bcac763eaf6f28/snippet.py,3.8,failed,5,39.48,True,"{""libxmp"": ""0.2.0""}",no_matching_distribution
+/gists/0115e0ce312f26ff59f4fbf4f5821ca2/snippet.py,3.8,failed,5,61.98,False,"{""requests"": ""2.28.2""}",no_matching_distribution
+/gists/015e2ce27cecdea63564/snippet.py,3.8,failed,5,78.54,False,"{""requests"": ""2.28.1""}",unknown
+/gists/01886b6f79ba0c4dce66/snippet.py,3.8,success,1,14.08,True,"{""django"": ""3.1""}",
+/gists/0191e14717af68bbba81/snippet.py,3.8,success,1,24.88,True,"{""pyspark"": ""2.3.2""}",
+/gists/019fd5c706e0bc94879f/snippet.py,3.8,failed,5,80.48,False,"{""requests"": ""2.28.1""}",unknown
+/gists/01b8b8e1909ae0f601c85e142f2bd15b/snippet.py,3.8,failed,5,87.52,False,"{""requests"": ""2.28.1"", ""beautifulsoup4"": ""4.12.0"", ""numpy"": ""1.24.1""}",unknown
+/gists/01bf3900d3a02c4e3927b2a2bcf39100/snippet.py,3.8,failed,5,73.64,False,{},unknown
+/gists/01c99322cf985e771827/snippet.py,3.8,failed,5,38.35,True,"{""PyObjC"": ""6.1.0""}",missing_system_dep
+/gists/026a4d6400b1efac9a13a3296f16e655/snippet.py,3.8,failed,5,92.33,True,"{""gensim"": ""4.1.3"", ""tensorflow"": ""2.10.0""}",missing_system_dep
+/gists/02ff378b3a91de94306a84d3aa2228bb/snippet.py,3.8,failed,5,46.25,True,"{""azure-core"": ""^1.11.0""}",no_matching_distribution
+/gists/0306734dfe17076dfd34e09660c198c0/snippet.py,3.8,failed,5,62.52,True,"{""fiona"": ""1.10.0"", ""geojson"": ""3.1.0"", ""geopandas"": ""0.13.2"", ""numpy"": ""1.23.5"", ""pandas"": ""1.5.3"", ""shapefile"": ""0.9.1"", ""shapely"": ""2.0.6""}",no_matching_distribution
+/gists/034e799c19eb763fa859/snippet.py,3.8,success,1,14.09,True,"{""django"": ""3.1""}",
+/gists/035dc3b722b7f89cce66520dde285c9a/snippet.py,3.8,failed,5,63.89,False,"{""requests"": ""^2.28.1""}",unknown
+/gists/037e4134d8271c0de71b838a461e7ac1/snippet.py,3.8,failed,5,73.79,False,{},unknown
+/gists/03d9c46c86691c9bb680/snippet.py,3.8,failed,5,79.13,False,"{""requests"": ""2.28.1"", ""beautifulsoup4"": ""4.11.1"", ""urllib3"": ""1.26.12""}",unknown
+/gists/03de5c4c21138da5c29d/snippet.py,3.8,failed,5,161.62,True,"{""IPython"": ""8.0.0"", ""numpy"": ""1.23.5"", ""tensorflow"": ""2.10.0""}",missing_system_dep
+/gists/044682e76def583a12e6c09209c664a1/snippet.py,3.8,failed,5,92.18,False,"{""nltk"": ""3.6.6"", ""scikit-learn"": ""1.1.2""}",no_matching_distribution
+/gists/045c887b6ccdf0edf4648da0c40bcc12/snippet.py,3.8,success,2,82.36,True,"{""torch"": ""2.0.0""}",no_matching_distribution
+/gists/046e434c51057dc9588762edd40199b1/snippet.py,3.8,failed,5,77.27,False,"{""pyobjc"": ""7.0.0"", ""pyobjc-framework-Foundation"": ""6.3.0"", ""pyobjc-framework-SystemConfiguration"": ""7.0.0""}",no_matching_distribution
+/gists/04c2b5ce5978c0d66e6e/snippet.py,3.8,failed,5,64.63,False,"{""clipboard"": ""2.0.8"", ""console"": ""0.12.0"", ""editor"": ""0.1.0"", ""urllib3"": ""^1.26.14""}",no_matching_distribution
+/gists/04ef258fa29e4e685287a30cf60462d0/snippet.py,3.8,failed,5,78.69,True,"{""flotilla"": ""0.13.1""}",no_matching_distribution
+/gists/04f3047ca8770f4a3a58/snippet.py,3.8,failed,5,47.79,True,"{""my_project"": ""0.0.1"", ""scrapy"": ""2.7.1"", ""twisted"": ""21.3.0""}",no_matching_distribution
+/gists/051e881fc94fe4a49295/snippet.py,3.8,success,1,16.74,True,"{""impacket"": ""0.12.0""}",
+/gists/053b89bd6975f89f043871335dce8c5b/snippet.py,3.8,success,3,28.17,True,"{""requests"": ""2.28.2""}",no_matching_distribution
+/gists/053db410f7fdd4e1d6034a0a7fd45d9b/snippet.py,3.8,failed,5,59.14,False,"{""cryptography"": ""3.6.8"", ""requests"": ""2.28.1""}",no_matching_distribution
+/gists/054023c4fca5369ffdb2/snippet.py,3.8,failed,5,46.45,True,"{""clipboard"": ""2.0.3"", ""idaapi"": ""7.4"", ""idautils"": ""0.12.0""}",no_matching_distribution
+/gists/056626de3fbdc7cf7b59de1d9f6279d1/snippet.py,3.8,failed,5,55.63,False,"{""cv2"": ""4.5.4"", ""dlib"": ""19.19"", ""imutils"": ""0.5.3""}",no_matching_distribution
+/gists/05aadb969e43788593d3/snippet.py,3.8,failed,5,59.47,False,"{""typing"": ""^3.10"", ""cerberus"": ""1.5.2"", ""attrs"": ""^21.4.0"", ""requests"": ""^2.28.1""}",no_matching_distribution
+/gists/05bec6966701f720c3aa/snippet.py,3.8,failed,5,66.94,False,"{""requests"": ""2.28.2""}",no_matching_distribution
+/gists/05ff99985269200cdc4854ddc04fa6e9/snippet.py,3.8,success,2,27.5,True,"{""lightgbm"": ""4.5.0"", ""numpy"": ""1.23.5""}",no_matching_distribution
+/gists/0618f44dc5270f9a2be2826d0d933ed7/snippet.py,3.8,failed,5,85.01,True,"{""django"": ""3.1""}",module_not_found
+/gists/06336eb10a1628850d6f/snippet.py,3.8,failed,5,63.1,False,"{""requests"": ""2.28.2""}",no_matching_distribution
+/gists/06649145d7e6c4c147c02459fd2bc5af/snippet.py,3.8,failed,5,64.2,True,"{""animation"": ""0.0.7"", ""helpers"": ""0.2.0"", ""mobject"": ""0.2.0"", ""numpy"": ""1.23.5"", ""scene"": ""0.0.1"", ""topics"": ""0.9.8""}",no_matching_distribution
+/gists/070c805d947bd17c7a19/snippet.py,3.8,failed,5,74.08,False,{},unknown
+/gists/071932322204bcad6063/snippet.py,3.8,failed,5,47.44,True,"{""scene"": ""1.0.1"", ""ui"": ""1.0.1""}",no_matching_distribution
+/gists/075c35b536cc08b832e353f2f43c0bdc/snippet.py,3.8,success,1,14.73,False,{},
+/gists/076424abd8b012371b516da32807ca14/snippet.py,3.8,failed,5,27.93,True,"{""airflow"": ""2.6.2"", ""pandas"": ""1.5.3""}",no_matching_distribution
+/gists/076bbc6a0d5056d20ad45095b434b02d/snippet.py,3.8,success,2,24.44,False,"{""nomad"": ""latest""}",no_matching_distribution
+/gists/07cdfc2826a565b50a68/snippet.py,3.8,failed,5,64.79,False,"{""requests"": ""^2.28.1""}",unknown
+/gists/0830affa1f7f19fd47b06d4cf89ed44d/snippet.py,3.8,success,1,19.06,True,"{""keras"": ""0.3.1""}",
+/gists/083777cb1f8c9efe6418c75d18bdd32b/snippet.py,3.8,failed,5,43.34,True,"{""ev3dev"": ""2.0.17"", ""evdev"": ""0.2.3""}",no_matching_distribution
+/gists/0932b2b5293839cd7d79fa6b513c8128/snippet.py,3.8,success,2,27.04,True,"{""numpy"": ""1.23.4"", ""scipy"": ""1.10.1""}",no_matching_distribution
+/gists/09648344984565f9477a/snippet.py,3.8,failed,5,77.7,False,{},unknown
+/gists/096f3b651b268b7af4c8c32475fa23d1/snippet.py,3.8,failed,5,53.0,True,"{""IPython"": ""8.0.0"", ""bs4"": ""5.1.1"", ""mechanize"": ""0.4.10"", ""pandas"": ""1.5.3""}",no_matching_distribution
+/gists/097f97f4cb67c554f04dba6b5a09a506/snippet.py,3.8,failed,5,83.9,False,"{""PyObjC"": ""2.7.1""}",missing_system_dep
+/gists/098f399d69f230521ef530baca832e76/snippet.py,3.8,failed,5,66.47,True,"{""Foundation"": ""latest"", ""urllib.request"": ""latest""}",module_not_found
+/gists/09b1f5403c63ceab5ae34710cbe2809e/snippet.py,3.8,failed,5,45.79,False,"{""cv2"": ""4.5.5"", ""numpy"": ""1.23.5""}",no_matching_distribution
+/gists/09cae53bf67ea8a39700/snippet.py,3.8,success,1,15.31,False,"{""beautifulsoup4"": ""4.11.1""}",
+/gists/09f5ab44486b1fc6df7bf20ce57159f1/snippet.py,3.8,success,1,16.23,False,"{""Pillow"": ""9.4.0""}",
+/gists/0a2ac74d800a2eff9540/snippet.py,3.8,failed,5,50.14,True,"{""appindicator"": ""latest"", ""gtk"": ""3.24.21"", ""urllib3"": ""1.26.12""}",no_matching_distribution
+/gists/0a3d4fae965bdbec1f9d/snippet.py,3.8,success,3,74.43,True,"{""keras"": ""2.11.0"", ""numpy"": ""1.23.4"", ""tensorflow"": ""2.11.0""}",module_not_found
+/gists/0a509faf231cff3cdec7/snippet.py,3.8,failed,5,64.72,True,"{""flask"": ""2.3.2"", ""Flask-Extensions"": ""^3.0.0""}",module_not_found
+/gists/0aaa9e4659977a98fc9f36d6887fef37/snippet.py,3.8,failed,5,56.35,False,"{""typing"": ""^3.7.4""}",unknown
+/gists/0acf77b2c022e2467cfb0d5493d454d6/snippet.py,3.8,success,1,14.09,True,"{""django"": ""3.1""}",
+/gists/0afa43225bdbe8e803cb/snippet.py,3.8,failed,5,43.0,True,"{""dbus"": ""1.12.2"", ""gobject"": ""0.5.24""}",no_matching_distribution
+/gists/0b42dbd687ae3b838728/snippet.py,3.8,failed,5,57.72,False,"{""GitPython"": ""3.1.25""}",no_matching_distribution
+/gists/0b677b13fca6cd0905ca/snippet.py,3.8,failed,5,55.19,True,"{""compiler"": ""1.8.0"", ""matplotlib"": ""3.5.1"", ""numpy"": ""1.23.4"", ""scipy"": ""1.10.1"", ""sklearn"": ""1.2.3""}",no_matching_distribution
+/gists/0b7e91487dcf10c0b8e8711eb6d73bc5/snippet.py,3.8,success,2,55.61,True,"{""matplotlib"": ""3.5.1"", ""numpy"": ""1.23.4"", ""tensorflow"": ""2.10.0""}",no_matching_distribution
+/gists/0b92b9ca837a0f5474c732876220db78/snippet.py,3.8,failed,5,65.13,True,"{""apiclient"": ""1.2.9"", ""flask"": ""2.2.2"", ""httplib2"": ""0.10.3"", ""oauth2client"": ""1.3""}",no_matching_distribution
+/gists/0b942dd86f01efe996b8977b158c37a6/snippet.py,3.8,success,3,27.97,True,"{""requests"": ""2.28.2""}",no_matching_distribution
+/gists/0b9d8a742fe0efe0fe82/snippet.py,3.8,success,1,14.76,False,{},
+/gists/0ba0270279a0f38280423754cea2ee1e/snippet.py,3.8,failed,5,190.55,True,"{""tensorflow"": ""2.11.0""}",no_matching_distribution
+/gists/0bc7d313e7a84b708374/snippet.py,3.8,success,1,12.65,True,"{""hug"": ""2.6.1""}",
+/gists/0bdd7059a08cbcd00898/snippet.py,3.8,failed,5,156.24,True,"{""keras"": ""2.12.0"", ""numpy"": ""1.23.4"", ""tensorflow"": ""2.12.0""}",module_not_found
+/gists/0c01b7a27e512db480847fac2cc54103/snippet.py,3.8,failed,5,40.95,True,"{""objc_util"": ""latest""}",no_matching_distribution
+/gists/0c10e910e514832b7103/snippet.py,3.8,failed,5,63.85,True,"{""google-api-python-client"": ""2.25.0"", ""google-auth-httplib2"": ""0.1.1"", ""google-auth-oauthlib"": ""0.3.4""}",no_matching_distribution
+/gists/0c7ccae5d764ff61788fc626096e5688/snippet.py,3.8,failed,5,43.28,False,"{""git"": ""2.38.1""}",no_matching_distribution
+/gists/0ca2272c015266e667924836364349c3/snippet.py,3.8,failed,5,39.55,False,"{""jose"": ""3.0.0"", ""requests"": ""2.28.2"", ""simplejson"": ""3.17.1""}",no_matching_distribution
+/gists/0cdd8d6adb8463961f50bd1845faddf8/snippet.py,3.8,failed,5,74.15,True,"{""torch"": ""1.10.0""}",unknown
+/gists/0cfe89a89b892e47e8418e281dfe318d/snippet.py,3.8,failed,5,63.83,True,"{""django"": ""3.1"", ""django-utils"": ""0.5.1"", ""utils"": ""0.1.0""}",unknown
+/gists/0d1baad4e3a871587ab1/snippet.py,3.8,failed,5,82.43,False,"{""requests"": ""2.28.1""}",missing_system_dep
+/gists/0d25683d9c8fce27edd3/snippet.py,3.8,failed,5,50.82,False,"{""airflow"": ""2.7.2"", ""slackclient"": ""1.5.0"", ""titan"": ""0.10.0""}",no_matching_distribution
+/gists/0d5a709bbb4186d1f45f2af14c65b110/snippet.py,3.8,failed,5,77.42,False,"{""requests"": ""2.28.1""}",unknown
+/gists/0d5b3e7cc89cb2180c6e/snippet.py,3.8,failed,5,57.24,False,"{""PIL"": ""8.3.1"", ""io"": ""3.9.0""}",no_matching_distribution
+/gists/0d9745f39a034758e51e/snippet.py,3.8,failed,5,66.33,True,"{""Quandl"": ""1.6.4"", ""matplotlib"": ""3.5.1"", ""numpy"": ""1.23.5"", ""pandas"": ""1.5.3"", ""scipy"": ""1.10.1"", ""sklearn"": ""1.0.2"", ""statsmodels"": ""0.13.2""}",no_matching_distribution
+/gists/0d9f91f789f0c523b0e7/snippet.py,3.8,failed,5,65.28,False,"{""requests"": ""2.28.1""}",no_matching_distribution
+/gists/0db840f27f1f0fd0747f13ab80d0ca37/snippet.py,3.8,failed,5,50.28,False,"{""cv2"": ""4.6.0"", ""numpy"": ""1.23.5"", ""requests"": ""2.28.2""}",no_matching_distribution
+/gists/0db858e055cc2bae953b435f5116aaa8/snippet.py,3.8,failed,5,74.1,False,{},unknown
+/gists/0e7d366d2e3623c5bb95/snippet.py,3.8,failed,5,57.01,False,"{""pyobjc"": ""7.0.1"", ""Foundation"": ""3.0.0""}",no_matching_distribution
+/gists/0ec0c3f5ca69bac2b625/snippet.py,3.8,success,4,59.65,True,"{""gevent"": ""1.5.0"", ""requests"": ""2.28.1"", ""scrapy"": ""2.4.1""}",no_matching_distribution
+/gists/0ee6dd444994fd67f63b/snippet.py,3.8,failed,5,61.93,False,"{""requests"": ""2.28.2""}",no_matching_distribution
+/gists/0efb4d07f28af1c8fc1b/snippet.py,3.8,failed,5,69.05,False,"{""clipboard"": ""latest"", ""console"": ""1.1.0"", ""editor"": ""1.1.1"", ""markdown2pdf"": ""1.0.2"", ""urllib3"": ""^1.26.4"", ""urlparse"": ""3.8""}",no_matching_distribution
+/gists/0efb90d998c59d5926ca7f4e79054361/snippet.py,3.8,failed,5,63.53,False,"{""bluezero"": ""^2.0.0"", ""dbus"": ""1.10.1"", ""gi"": ""1.0.12"", ""gobject"": ""3.0.0""}",no_matching_distribution
+/gists/0efcacfb43827ba3a6bac3356315c419/snippet.py,3.8,failed,5,47.34,False,"{""cv2"": ""4.5.5"", ""numpy"": ""1.23.5""}",no_matching_distribution
+/gists/0f450e738bf79c003253/snippet.py,3.8,failed,5,53.03,False,"{""jnius"": ""1.3.2"", ""kivy"": ""2.1.0""}",no_matching_distribution
+/gists/0f575a0891cfef5f1b0024c89dcbaeea/snippet.py,3.8,failed,5,50.2,False,"{""pyobjc"": ""7.2.0"", ""osx-dev"": ""latest""}",missing_system_dep
+/gists/0f5f65ddbfa278713f58/snippet.py,3.8,failed,5,103.77,False,"{""requests"": ""2.28.2"", ""numpy"": ""1.23.4"", ""pandas"": ""1.5.3""}",unknown
+/gists/0f87efc363309e99d600e3a6300fbcff/snippet.py,3.8,failed,5,38.22,True,"{""gimpfu"": ""latest""}",no_matching_distribution
+/gists/10005117/snippet.py,3.8,failed,5,65.25,False,"{""requests"": ""^2.28.1"", ""numpy"": ""^1.23.5"", ""pandas"": ""^1.5.3""}",unknown
+/gists/10010307/snippet.py,3.8,failed,5,116.69,False,"{""requests"": ""2.28.1"", ""numpy"": ""1.23.5"", ""pandas"": ""1.5.3""}",unknown
+/gists/10011921/snippet.py,3.8,failed,5,71.2,True,"{""apiclient"": ""1.0.0"", ""google"": ""2.1.0"", ""httplib2"": ""0.10.0"", ""jinja2"": ""3.1.2"", ""oauth2client"": ""1.3.0"", ""webapp2"": ""3.0.0""}",no_matching_distribution
+/gists/10016605/snippet.py,3.8,failed,5,43.29,True,"{""lx"": ""0.1"", ""lxu"": ""latest""}",no_matching_distribution
+/gists/10023837/snippet.py,3.8,success,1,15.25,True,"{""scene"": ""0.0.1"", ""sound"": ""0.1.0""}",
+/gists/1009475/snippet.py,3.8,failed,5,44.51,True,"{""pywin32"": ""^228""}",unknown
+/gists/101323115e70bb6671d3/snippet.py,3.8,failed,5,65.22,False,"{""requests"": ""2.28.2""}",no_matching_distribution
+/gists/10206392/snippet.py,3.8,failed,5,37.81,True,"{""hexchat"": ""latest""}",no_matching_distribution
+/gists/1023456/snippet.py,3.8,failed,5,77.67,False,"{""requests"": ""2.28.1""}",unknown
+/gists/10235798/snippet.py,3.8,success,1,14.14,True,"{""django"": ""3.1""}",
+/gists/1025525/snippet.py,3.8,failed,5,69.4,False,"{""requests"": ""2.28.1""}",no_matching_distribution
+/gists/1025736/snippet.py,3.8,failed,5,52.44,True,"{""google"": ""1.9.3"", ""ndb"": ""0.5.17"", ""tipfy"": ""0.6.4"", ""tipfyext"": ""0.6.4""}",no_matching_distribution
+/gists/10281460/snippet.py,3.8,success,1,64.9,False,{},
+/gists/1029336/snippet.py,3.8,success,1,14.12,True,"{""django"": ""3.1""}",
+/gists/10295174/snippet.py,3.8,failed,5,62.23,False,"{""requests"": ""^2.28.2"", ""beautifulsoup4"": ""4.12.0""}",unknown
+/gists/1029870/snippet.py,3.8,failed,5,50.74,False,"{""AddressBook"": ""latest"", ""objc"": ""0.3.1""}",no_matching_distribution
+/gists/10335601/snippet.py,3.8,failed,5,85.71,True,{},module_not_found
+/gists/1035190/snippet.py,3.8,failed,5,73.82,False,{},unknown
+/gists/10354951/snippet.py,3.8,failed,5,41.16,True,"{""jnius"": ""2.4.2""}",no_matching_distribution
+/gists/1035890/snippet.py,3.8,failed,5,115.32,False,"{""requests"": ""2.28.1"", ""numpy"": ""1.23.5"", ""pandas"": ""1.5.3""}",unknown
+/gists/1036883/snippet.py,3.8,failed,5,77.96,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1038987/snippet.py,3.8,success,1,14.13,True,"{""django"": ""3.1""}",
+/gists/1040366/snippet.py,3.8,failed,5,83.87,False,"{""requests"": ""2.28.1"", ""beautifulsoup4"": ""4.11.1""}",unknown
+/gists/1041172/snippet.py,3.8,failed,5,78.81,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1042719/snippet.py,3.8,success,3,38.13,True,"{""django"": ""3.1"", ""ldap3"": ""2.1.1""}",no_matching_distribution
+/gists/1042778/snippet.py,3.8,failed,5,61.01,False,"{""requests"": ""^2.28.1""}",unknown
+/gists/10438748/snippet.py,3.8,failed,5,51.79,True,"{""google"": ""1.9.3"", ""model"": ""0.1.0"", ""webapp2"": ""3.1.0""}",no_matching_distribution
+/gists/1044215/snippet.py,3.8,failed,5,47.48,False,"{""apsw"": ""0.9.1"", ""django"": ""4.2.3""}",no_matching_distribution
+/gists/1045108/snippet.py,3.8,failed,5,86.17,False,"{""requests"": ""2.28.1""}",unknown
+/gists/10491632/snippet.py,3.8,failed,5,46.87,False,"{""PIL"": ""9.0.1"", ""numpy"": ""1.23.5""}",no_matching_distribution
+/gists/1052286/snippet.py,3.8,failed,5,59.48,False,"{""cookielib"": ""3.0.0"", ""requests"": ""2.25.1"", ""wordpress_xmlrpc"": ""1.0.0""}",no_matching_distribution
+/gists/1054969/snippet.py,3.8,failed,5,69.52,True,{},module_not_found
+/gists/1055161/snippet.py,3.8,failed,5,49.59,True,"{""PyQt5"": ""5.15.8"", ""opencv-python"": ""4.6.0""}",no_matching_distribution
+/gists/10554232/snippet.py,3.8,failed,5,52.89,True,"{""servicemanager"": ""1.8.3"", ""win32event"": ""0.4.4"", ""win32service"": ""1.0.1"", ""win32serviceutil"": ""1.0.1""}",no_matching_distribution
+/gists/1055992/snippet.py,3.8,success,1,13.97,True,"{""django"": ""3.1""}",
+/gists/10567484/snippet.py,3.8,failed,5,47.4,False,"{""PIL"": ""9.0.1"", ""numpy"": ""1.23.5""}",no_matching_distribution
+/gists/10589494/snippet.py,3.8,failed,5,42.47,False,"{""imagekit"": ""latest""}",no_matching_distribution
+/gists/1059647/snippet.py,3.8,failed,5,43.96,True,"{""ndb"": ""1.0.8"", ""webapp2_extends"": ""0.1.4""}",no_matching_distribution
+/gists/1065196/snippet.py,3.8,success,1,22.59,True,"{""django"": ""3.1"", ""johnny"": ""0.2.1""}",
+/gists/1068021/snippet.py,3.8,failed,5,66.37,False,"{""mysqlclient"": ""2.0.0""}",no_matching_distribution
+/gists/1068255/snippet.py,3.8,success,1,13.92,True,"{""django"": ""3.1""}",
+/gists/1068868/snippet.py,3.8,failed,5,53.79,False,"{""django"": ""4.1.1"", ""taggit"": ""0.23.1"", ""taggit_autocomplete"": ""0.1.1"", ""zinnia"": ""1.10.0""}",no_matching_distribution
+/gists/106c49a3ae6d420937aa/snippet.py,3.8,failed,5,91.31,True,"{""PyQt5"": ""5.15.8""}",module_not_found
+/gists/1072977/snippet.py,3.8,failed,5,45.08,True,"{""django_auth_ldap"": ""3.0.0"", ""ldap"": ""3.0.0""}",no_matching_distribution
+/gists/1074124/snippet.py,3.8,failed,5,71.58,True,"{""twisted"": ""22.8.0"", ""txredisapi"": ""1.4.10""}",no_matching_distribution
+/gists/1074202/snippet.py,3.8,failed,5,77.09,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1074227/snippet.py,3.8,failed,5,74.1,False,{},unknown
+/gists/1074551/snippet.py,3.8,failed,5,65.27,False,"{""requests"": ""2.28.1""}",no_matching_distribution
+/gists/1077318/snippet.py,3.8,success,1,14.78,False,{},
+/gists/1077970/snippet.py,3.8,failed,5,25.71,True,"{""pyodbc"": ""4.0.33""}",missing_system_dep
+/gists/10792332/snippet.py,3.8,success,2,26.4,False,{},no_matching_distribution
+/gists/1082570/snippet.py,3.8,failed,5,40.17,True,"{""selenium"": ""4.0.0"", ""webdriver-manager"": ""5.15.0""}",no_matching_distribution
+/gists/1083908/snippet.py,3.8,failed,5,73.96,False,{},unknown
+/gists/1088273/snippet.py,3.8,failed,5,46.28,True,"{""scipy"": ""1.9.0"", ""numpy"": ""1.24.5""}",no_matching_distribution
+/gists/1091026/snippet.py,3.8,failed,5,73.41,True,"{""sublime_plugin"": ""latest""}",module_not_found
+/gists/10938795/snippet.py,3.8,failed,5,90.44,True,"{""Flask"": ""2.3.2""}",module_not_found
+/gists/1094832/snippet.py,3.8,failed,5,85.27,True,"{""django"": ""4.1.1""}",unknown
+/gists/10955449/snippet.py,3.8,success,1,14.83,False,{},
+/gists/1096373/snippet.py,3.8,failed,5,77.46,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1098968/snippet.py,3.8,failed,5,80.57,False,"{""requests"": ""2.28.1""}",unknown
+/gists/10a742de43246210f3ba/snippet.py,3.8,success,3,56.57,True,"{""gensim"": ""4.1.2""}",no_matching_distribution
+/gists/10cd35b2872628246140/snippet.py,3.8,failed,5,50.36,False,"{""PIL"": ""8.3.2"", ""gi"": ""0.5.1""}",no_matching_distribution
+/gists/1104507/snippet.py,3.8,failed,5,42.98,False,"{""Bio"": ""1.7.2""}",no_matching_distribution
+/gists/1104553/snippet.py,3.8,failed,5,76.58,True,"{""networkx"": ""2.6.2""}",unknown
+/gists/1107375/snippet.py,3.8,failed,5,71.93,False,"{""requests"": ""2.28.2"", ""beautifulsoup4"": ""4.11.1""}",no_matching_distribution
+/gists/11078820/snippet.py,3.8,failed,5,65.67,False,"{""wheel"": ""^0.36.2""}",missing_system_dep
+/gists/1108817/snippet.py,3.8,success,2,21.12,True,"{""django"": ""3.1.1"", ""lxml"": ""4.7.1""}",version_conflict
+/gists/1109153/snippet.py,3.8,failed,5,42.88,False,"{""dateutil"": ""2.8.1""}",no_matching_distribution
+/gists/1112928/snippet.py,3.8,failed,5,79.18,False,"{""requests"": ""2.28.1""}",unknown
+/gists/11129975/snippet.py,3.8,failed,5,94.85,True,"{""PyQt5"": ""5.15.8""}",module_not_found
+/gists/11181988/snippet.py,3.8,failed,5,55.72,False,"{""requests"": ""^2.28.2""}",unknown
+/gists/1118585/snippet.py,3.8,failed,5,77.67,False,"{""requests"": ""2.28.1""}",unknown
+/gists/11192605/snippet.py,3.8,failed,5,73.96,False,{},unknown
+/gists/111c8ee32505a11ad7a6c629f277c2a4/snippet.py,3.8,failed,5,63.64,True,{},no_matching_distribution
+/gists/11215761/snippet.py,3.8,success,1,13.79,True,"{""django"": ""3.1""}",
+/gists/11242170/snippet.py,3.8,success,4,58.64,False,"{""Pillow"": ""9.0.1"", ""clipboard"": ""latest"", ""photos"": ""latest""}",no_matching_distribution
+/gists/1124bb02a9fd4abce3d86caf2f950cb2/snippet.py,3.8,success,2,67.73,True,"{""tensorflow"": ""2.12.0""}",no_matching_distribution
+/gists/1125832/snippet.py,3.8,success,1,25.39,True,"{""IPython"": ""0.12""}",
+/gists/11280233/snippet.py,3.8,success,1,11.81,True,"{""mininet"": ""2.3.0.dev6""}",
+/gists/11284662/snippet.py,3.8,failed,5,80.2,False,"{""requests"": ""2.28.1""}",unknown
+/gists/11292725/snippet.py,3.8,failed,5,66.34,False,"{""requests"": ""2.28.1""}",no_matching_distribution
+/gists/1133602/snippet.py,3.8,failed,5,66.16,True,{},module_not_found
+/gists/1134410/snippet.py,3.8,failed,5,45.97,True,"{""bpy"": ""latest"", ""mathutils"": ""3.1.0""}",no_matching_distribution
+/gists/113635/snippet.py,3.8,success,1,13.8,True,"{""django"": ""3.1""}",
+/gists/11367287/snippet.py,3.8,failed,5,80.62,False,"{""requests"": ""2.28.2""}",unknown
+/gists/11375647/snippet.py,3.8,failed,5,75.49,False,"{""requests"": ""2.28.1""}",unknown
+/gists/11378945/snippet.py,3.8,failed,5,76.96,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1140136/snippet.py,3.8,failed,5,65.45,True,"{""django"": ""3.1"", ""urllib3"": ""^1.26""}",module_not_found
+/gists/1140516/snippet.py,3.8,success,1,13.83,True,"{""django"": ""3.1""}",
+/gists/11405336/snippet.py,3.8,failed,5,43.25,False,"{""gi"": ""0.5.1""}",no_matching_distribution
+/gists/1142740/snippet.py,3.8,failed,5,89.72,False,"{""fabric"": ""3.2.1"", ""PyYAML"": ""5.3.1""}",no_matching_distribution
+/gists/1147973/snippet.py,3.8,failed,5,66.67,False,"{""requests"": ""2.28.2""}",no_matching_distribution
+/gists/11526013/snippet.py,3.8,failed,5,79.8,True,{},module_not_found
+/gists/11538913/snippet.py,3.8,failed,5,56.64,False,"{""DockPrep"": ""latest"", ""WriteMol2"": ""0.4.0"", ""chimera"": ""1.16.0""}",no_matching_distribution
+/gists/1160201/snippet.py,3.8,failed,5,85.16,True,"{""django"": ""3.2.19""}",unknown
+/gists/1160696/snippet.py,3.8,failed,5,39.78,True,"{""myapplication"": ""1.0.0""}",no_matching_distribution
+/gists/1161423/snippet.py,3.8,success,1,13.8,True,"{""django"": ""3.1""}",
+/gists/1165038/snippet.py,3.8,success,3,36.36,False,"{""pyOpenSSL"": ""21.0.0""}",no_matching_distribution
+/gists/1165344/snippet.py,3.8,failed,5,84.93,True,"{""django"": ""3.2.13""}",unknown
+/gists/1177373/snippet.py,3.8,failed,5,36.98,True,"{""redis"": ""7.0.1"", ""scrapy"": ""2.6.1""}",no_matching_distribution
+/gists/1183767/snippet.py,3.8,success,1,13.85,True,"{""django"": ""3.1""}",
+/gists/1183842/snippet.py,3.8,failed,5,79.29,False,"{""requests"": ""2.28.1"", ""urllib3"": ""1.26.11""}",unknown
+/gists/1184264/snippet.py,3.8,failed,5,60.18,True,"{""gevent"": ""1.5.0"", ""pymongo"": ""4.1.2""}",no_matching_distribution
+/gists/1186126/snippet.py,3.8,failed,5,77.57,False,"{""requests"": ""2.28.1"", ""numpy"": ""1.23.5"", ""pandas"": ""1.5.3""}",unknown
+/gists/1189327/snippet.py,3.8,failed,5,75.96,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1191457/snippet.py,3.8,failed,5,112.51,False,"{""requests"": ""2.28.1"", ""numpy"": ""1.23.5"", ""pandas"": ""1.5.3""}",unknown
+/gists/1192059/snippet.py,3.8,failed,5,77.46,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1196291/snippet.py,3.8,failed,5,120.77,False,"{""matplotlib"": ""3.5.1"", ""numpy"": ""1.23.5"", ""tweepy"": ""4.1.0""}",module_not_found
+/gists/1200485/snippet.py,3.8,failed,5,47.32,True,"{""flask"": ""2.2.2"", ""ndb"": ""0.9.1"", ""werkzeug"": ""2.0.3""}",no_matching_distribution
+/gists/1202066/snippet.py,3.8,failed,5,64.76,False,"{""redis"": ""4.0.0"", ""flask"": ""2.2.2"", ""web"": ""0.1.0""}",no_matching_distribution
+/gists/1202516/snippet.py,3.8,failed,5,55.07,True,"{""foundationdb"": ""5.3.0""}",no_matching_distribution
+/gists/1203640/snippet.py,3.8,success,1,13.82,True,"{""django"": ""3.1""}",
+/gists/1207636/snippet.py,3.8,success,1,13.79,True,"{""django"": ""3.1""}",
+/gists/1210791/snippet.py,3.8,failed,5,95.61,True,"{""PyQt5"": ""5.15.8""}",module_not_found
+/gists/1217855/snippet.py,3.8,failed,5,61.77,False,"{""requests"": ""2.28.1""}",no_matching_distribution
+/gists/1218932/snippet.py,3.8,failed,5,77.65,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1219671/snippet.py,3.8,failed,5,38.93,True,"{""win32clipboard"": ""latest""}",no_matching_distribution
+/gists/1219955/snippet.py,3.8,failed,5,60.81,True,"{""google"": ""^2.2.0"", ""simplejson"": ""3.17.5""}",no_matching_distribution
+/gists/1228626/snippet.py,3.8,success,1,13.81,True,"{""django"": ""3.1""}",
+/gists/1229681/snippet.py,3.8,failed,5,42.77,True,"{""django"": ""3.1"", ""io"": ""^1.0""}",no_matching_distribution
+/gists/1229685/snippet.py,3.8,success,1,13.99,True,"{""django"": ""3.1""}",
+/gists/1229770/snippet.py,3.8,failed,5,56.71,True,"{""flask"": ""2.2.2"", ""httplib2"": ""0.18.1"", ""werkzeug"": ""2.2.2"", ""urllib.parse"": ""^1.1.1""}",no_matching_distribution
+/gists/122f258ba6eaa23dd9c5/snippet.py,3.8,failed,5,63.55,False,"{""bpy"": ""3.0.0"", ""io_scene_fbx"": ""1.0.0"", ""mathutils"": ""3.0.0""}",no_matching_distribution
+/gists/1231964e784ab9acb65d/snippet.py,3.8,failed,5,81.12,False,"{""plac"": ""1.0.0"", ""spacy"": ""3.2.3"", ""ujson"": ""2.0.0""}",missing_system_dep
+/gists/1233846/snippet.py,3.8,failed,5,65.51,False,"{""typing"": ""^3.8.2"", ""setuptools"": ""^64.6.0"", ""wheel"": ""^0.37.0""}",unknown
+/gists/1234843/snippet.py,3.8,failed,5,64.7,True,"{""django"": ""3.1"", ""redis-py"": ""4.3.0""}",no_matching_distribution
+/gists/1239373/snippet.py,3.8,failed,5,66.53,False,"{""requests"": ""2.28.2"", ""beautifulsoup4"": ""4.11.1""}",no_matching_distribution
+/gists/1239674/snippet.py,3.8,failed,5,44.6,True,"{""sublime"": ""4.3.1"", ""sublime_plugin"": ""4.3.1""}",no_matching_distribution
+/gists/1242589/snippet.py,3.8,failed,5,41.32,True,"{""foundation"": ""0.1.0""}",no_matching_distribution
+/gists/1246146/snippet.py,3.8,failed,5,66.26,True,"{""pymongo"": ""4.0.1""}",unknown
+/gists/1246268/snippet.py,3.8,failed,5,65.32,False,"{""package_name"": ""requests"", ""version"": ""2.28.1""}",no_matching_distribution
+/gists/1248728/snippet.py,3.8,failed,5,62.49,False,"{""django"": ""4.2.3"", ""social_auth"": ""3.1.0"", ""urllib3"": ""1.26.10""}",no_matching_distribution
+/gists/1251716/snippet.py,3.8,failed,5,65.04,False,"{""requests"": ""^2.28.1""}",unknown
+/gists/1253332/snippet.py,3.8,failed,5,73.92,False,{},unknown
+/gists/1254809/snippet.py,3.8,failed,5,95.97,False,"{""requests"": ""2.28.1"", ""numpy"": ""1.23.5""}",unknown
+/gists/125559/snippet.py,3.8,failed,5,81.15,False,"{""requests"": ""2.28.2"", ""numpy"": ""1.23.5"", ""pandas"": ""1.5.3""}",unknown
+/gists/1260ba896d448bad0eebdf26b80c00cc/snippet.py,3.8,success,3,76.39,True,"{""gym"": ""0.17.3"", ""numpy"": ""1.24.4"", ""tensorflow"": ""2.10.0""}",no_matching_distribution
+/gists/1262332/snippet.py,3.8,failed,5,70.58,False,"{""requests"": ""2.28.2""}",no_matching_distribution
+/gists/1264102/snippet.py,3.8,failed,5,87.49,True,"{""django"": ""3.1.1"", ""six"": ""1.16.0""}",unknown
+/gists/1265346/snippet.py,3.8,success,1,13.99,True,"{""django"": ""3.1"", ""simplejson"": ""3.17.5""}",
+/gists/1267632/snippet.py,3.8,failed,5,77.31,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1268033/snippet.py,3.8,failed,5,68.9,False,"{""django"": ""4.2.2"", ""six"": ""~1.15"", ""io"": ""^0.1""}",no_matching_distribution
+/gists/1269098/snippet.py,3.8,failed,5,79.48,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1269949/snippet.py,3.8,success,1,13.77,True,"{""django"": ""3.1""}",
+/gists/127368f7dc810dd37fe18aee87dd2ee2/snippet.py,3.8,failed,5,64.24,True,"{""psycogreen"": ""1.0.1""}",unknown
+/gists/1275204/snippet.py,3.8,failed,5,48.74,True,"{""django"": ""3.1"", ""library"": ""1.0.0""}",no_matching_distribution
+/gists/1277655/snippet.py,3.8,failed,5,86.56,False,"{""requests"": ""2.28.1"", ""beautifulsoup4"": ""4.12.0""}",unknown
+/gists/1283684/snippet.py,3.8,failed,5,78.22,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1284577/snippet.py,3.8,success,1,15.43,False,"{""PyYAML"": ""5.4.1""}",
+/gists/1285742/snippet.py,3.8,failed,5,91.63,True,"{""Pillow"": ""9.3.0""}",module_not_found
+/gists/1288025/snippet.py,3.8,failed,5,45.36,False,"{""django"": ""4.2.3"", ""fallen"": ""0.9.0"", ""haystack"": ""2.1.0""}",no_matching_distribution
+/gists/1288160dad16cc473a53/snippet.py,3.8,success,1,14.75,False,{},
+/gists/1289286/snippet.py,3.8,failed,5,70.17,False,"{""requests"": ""2.28.2""}",no_matching_distribution
+/gists/1290744/snippet.py,3.8,failed,5,75.1,False,"{""requests"": ""2.28.1""}",unknown
+/gists/12da69b95d010c8a810fd384cca8d02a/snippet.py,3.8,success,1,64.87,False,{},
+/gists/1303651/snippet.py,3.8,failed,5,84.51,True,"{""django"": ""3.1.1""}",unknown
+/gists/130583/snippet.py,3.8,success,1,13.76,True,"{""django"": ""3.1""}",
+/gists/1306719/snippet.py,3.8,success,2,28.69,False,{},no_matching_distribution
+/gists/1307521/snippet.py,3.8,failed,5,66.96,False,"{""_webassets"": ""1.0.0"", ""app"": ""1.0.0"", ""webassets"": ""0.20""}",unknown
+/gists/1308865/snippet.py,3.8,success,1,13.78,True,"{""django"": ""3.1""}",
+/gists/1309895/snippet.py,3.8,failed,5,49.08,True,"{""appindicator"": ""0.14.0"", ""gobject"": ""0.5.10"", ""gtk"": ""3.24.20""}",no_matching_distribution
+/gists/130cd92dc47c56c47030/snippet.py,3.8,failed,5,48.8,True,"{""PIL"": ""9.0.1"", ""matplotlib"": ""3.5.1"", ""numpy"": ""1.23.5"", ""pydub"": ""0.25.3""}",no_matching_distribution
+/gists/1310549/snippet.py,3.8,failed,5,105.96,True,"{""django"": ""4.1.1""}",module_not_found
+/gists/1315148/snippet.py,3.8,failed,5,76.88,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1320970/snippet.py,3.8,failed,5,83.55,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1321295/snippet.py,3.8,failed,5,52.89,False,"{""requests"": ""^2.28.1""}",unknown
+/gists/1321575/snippet.py,3.8,failed,5,61.5,False,"{""requests"": ""2.28.2""}",no_matching_distribution
+/gists/1321585/snippet.py,3.8,failed,5,82.38,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1323194/snippet.py,3.8,failed,5,43.61,True,"{""sublime_plugin"": ""latest""}",no_matching_distribution
+/gists/1326477/snippet.py,3.8,failed,5,51.15,True,"{""celery"": ""5.4.0"", ""Flask"": ""2.3.3"", ""Flask-WTF"": ""2.0.1"", ""myapp"": ""0.1.0""}",no_matching_distribution
+/gists/1327072/snippet.py,3.8,failed,5,90.46,False,"{""numpy"": ""1.23.5"", ""scipy"": ""1.10.1"", ""setuptools"": ""66.1.1""}",missing_system_dep
+/gists/1329319/snippet.py,3.8,failed,5,74.03,False,{},unknown
+/gists/1337131/snippet.py,3.8,failed,5,53.08,True,"{""PyQt5"": ""5.15.2"", ""sip"": ""4.19.8""}",no_matching_distribution
+/gists/1338222/snippet.py,3.8,failed,5,79.57,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1342497/snippet.py,3.8,failed,5,77.31,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1342942/snippet.py,3.8,success,2,27.84,True,"{""numpy"": ""1.23.4"", ""matplotlib"": ""3.5.1""}",no_matching_distribution
+/gists/1343455/snippet.py,3.8,failed,5,76.78,True,"{""twisted"": ""24.3.0"", ""txpostgres"": ""0.8.1"", ""websocket-client"": ""1.4.0""}",no_matching_distribution
+/gists/134acb5f7423312effcc98ec56679136/snippet.py,3.8,failed,5,54.74,False,"{""pyobjc"": ""6.0.1""}",no_matching_distribution
+/gists/1350641/snippet.py,3.8,failed,5,85.06,True,"{""django"": ""3.2.21""}",unknown
+/gists/1351047/snippet.py,3.8,failed,5,54.84,False,"{""numpy"": ""1.23.5"", ""sklearn"": ""1.0.1""}",no_matching_distribution
+/gists/1352028/snippet.py,3.8,failed,5,57.43,False,"{""requests"": ""2.28.1""}",no_matching_distribution
+/gists/1355170/snippet.py,3.8,failed,5,61.27,True,"{""flask"": ""2.2.2"", ""jinja2"": ""3.1.1"", ""my_helpers"": ""1.0.0""}",no_matching_distribution
+/gists/1357185/snippet.py,3.8,failed,5,57.92,True,"{""bpy"": ""3.1.0""}",module_not_found
+/gists/1358794/snippet.py,3.8,failed,5,84.15,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1361643/snippet.py,3.8,failed,5,69.35,False,"{""requests"": ""2.28.2""}",no_matching_distribution
+/gists/13623f68e36fdad4cb67/snippet.py,3.8,failed,5,84.71,False,"{""cryptography"": ""3.4.8"", ""keyring"": ""22.0"", ""requests"": ""2.28.1""}",module_not_found
+/gists/1362a8908be01e23041d/snippet.py,3.8,failed,5,42.69,False,"{""pyobjc"": ""7.2.0""}",missing_system_dep
+/gists/1363730/snippet.py,3.8,failed,5,55.69,False,"{""django"": ""4.2.0"", ""six"": ""^1.16.0""}",no_matching_distribution
+/gists/1367378/snippet.py,3.8,success,1,14.78,False,{},
+/gists/1369619/snippet.py,3.8,success,1,13.77,True,"{""django"": ""3.1""}",
+/gists/1372780/snippet.py,3.8,failed,5,74.39,True,"{""pymongo"": ""4.4.0"", ""simplejson"": ""3.17.5""}",module_not_found
+/gists/137653/snippet.py,3.8,failed,5,68.01,False,"{""requests"": ""2.28.1"", ""numpy"": ""1.23.5""}",no_matching_distribution
+/gists/137667/snippet.py,3.8,failed,5,56.95,True,"{""Pillow"": ""8.4.0"", ""pygtk"": ""3.24.18"", ""pywebkitgtk"": "">=4.0.4""}",no_matching_distribution
+/gists/1379479/snippet.py,3.8,failed,5,48.16,True,"{""commands"": ""latest"", ""sublime"": ""0.1.0"", ""sublime_plugin"": ""2.0""}",no_matching_distribution
+/gists/1379652/snippet.py,3.8,failed,5,53.31,False,"{""ckeditor"": ""5.0.0"", ""django"": ""4.2.1""}",no_matching_distribution
+/gists/1381489/snippet.py,3.8,failed,5,53.29,True,"{""PyQt4"": ""4.11.1"", ""sip"": ""4.20.8"", ""maya"": ""2023""}",no_matching_distribution
+/gists/1382972/snippet.py,3.8,failed,5,47.89,False,"{""requests"": ""^2.28.1""}",unknown
+/gists/1387470/snippet.py,3.8,failed,5,79.23,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1388243/snippet.py,3.8,success,1,13.84,True,"{""django"": ""3.1""}",
+/gists/1390853/snippet.py,3.8,failed,5,65.83,False,"{""requests"": ""2.28.2""}",no_matching_distribution
+/gists/1395810/snippet.py,3.8,failed,5,67.11,True,"{""google-api-python-client"": ""2.35.0""}",no_matching_distribution
+/gists/139f710ca91ed5fabaf9e6616d2c762b/snippet.py,3.8,failed,5,61.18,False,"{""gensim"": ""4.1.2"", ""numpy"": ""1.23.5"", ""sklearn"": ""1.0.2""}",no_matching_distribution
+/gists/13f02f45a41ad90f454f/snippet.py,3.8,failed,5,83.97,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1401195/snippet.py,3.8,failed,5,27.1,False,"{""imposm"": ""2.1.1""}",unknown
+/gists/1402045/snippet.py,3.8,success,1,13.77,True,"{""django"": ""3.1""}",
+/gists/1402892/snippet.py,3.8,failed,5,57.69,False,"{""requests"": ""2.28.1""}",no_matching_distribution
+/gists/1410088/snippet.py,3.8,failed,5,72.93,False,"{""opencv-python"": ""4.5.5.60"", ""pygame"": ""2.1.2""}",module_not_found
+/gists/1410094/snippet.py,3.8,failed,5,69.03,False,"{""requests"": ""2.28.1"", ""beautifulsoup4"": ""4.11.1"", ""numpy"": ""1.23.5"", ""pandas"": ""1.5.3""}",no_matching_distribution
+/gists/1411980/snippet.py,3.8,failed,5,78.41,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1417f55cb896a44e68a6/snippet.py,3.8,failed,5,56.8,False,"{""requests"": ""^2.28.1""}",unknown
+/gists/1423116/snippet.py,3.8,failed,5,46.8,True,"{""pickle"": ""latest"", ""cmemcached"": ""1.2.1""}",no_matching_distribution
+/gists/1423373/snippet.py,3.8,failed,5,66.47,False,"{""typing"": ""3.7.4""}",no_matching_distribution
+/gists/1424374/snippet.py,3.8,failed,5,77.56,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1433392/snippet.py,3.8,success,1,15.78,False,"{""requests"": ""2.28.1""}",
+/gists/1433794/snippet.py,3.8,failed,5,79.07,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1435045/snippet.py,3.8,success,1,63.94,True,"{""twisted"": ""24.3.0""}",
+/gists/1435555/snippet.py,3.8,failed,5,79.63,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1436671/snippet.py,3.8,failed,5,76.71,False,"{""requests"": ""2.28.2""}",unknown
+/gists/143e65a425722dc2f3d0/snippet.py,3.8,failed,5,67.2,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1440567/snippet.py,3.8,success,1,13.8,True,"{""django"": ""3.1""}",
+/gists/1440754/snippet.py,3.8,failed,5,64.55,False,"{""requests"": ""^2.28.2""}",unknown
+/gists/1441019/snippet.py,3.8,success,2,24.8,False,{},no_matching_distribution
+/gists/144747/snippet.py,3.8,success,1,13.82,True,"{""django"": ""3.1""}",
+/gists/1451300/snippet.py,3.8,failed,5,141.63,False,"{""numpy"": ""1.23.5"", ""matplotlib"": ""3.6.2"", ""scikit-learn"": ""1.2.2""}",module_not_found
+/gists/1453629/snippet.py,3.8,success,1,13.81,True,"{""django"": ""3.1""}",
+/gists/1459283a9c934cbc41f3/snippet.py,3.8,failed,5,78.08,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1467584/snippet.py,3.8,failed,5,62.27,True,{},module_not_found
+/gists/1473120/snippet.py,3.8,failed,5,84.96,True,"{""django"": ""3.2.19""}",unknown
+/gists/1483322/snippet.py,3.8,failed,5,48.62,False,"{""mysqlclient"": ""2.3.1"", ""psycopg2"": ""2.9.6""}",no_matching_distribution
+/gists/1486762/snippet.py,3.8,failed,5,73.74,False,{},unknown
+/gists/1495011/snippet.py,3.8,failed,5,80.8,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1497850/snippet.py,3.8,failed,5,70.67,False,"{""requests"": ""2.28.1""}",unknown
+/gists/14a8d6bf4783f4704c8a/snippet.py,3.8,failed,5,103.36,True,"{""buildbot"": ""0.7.1"", ""cactus"": ""3.3.3"", ""twisted"": ""24.3.0""}",module_not_found
+/gists/14f34c2b8153d9b4f336df8535b3416a/snippet.py,3.8,failed,5,163.84,True,"{""tensorflow"": ""2.10.2""}",missing_system_dep
+/gists/1507152/snippet.py,3.8,failed,5,43.17,False,"{""git"": ""2.38.1""}",no_matching_distribution
+/gists/1509946/snippet.py,3.8,failed,5,77.07,True,{},module_not_found
+/gists/1516095/snippet.py,3.8,success,1,20.63,True,"{""mice"": ""0.1.2""}",
+/gists/1519543/snippet.py,3.8,failed,5,47.13,True,"{""sublime_plugin"": ""4.2.1""}",no_matching_distribution
+/gists/1521059/snippet.py,3.8,failed,5,50.55,False,"{""typing"": ""3.8.0""}",no_matching_distribution
+/gists/1522bcdb5b05365c0222/snippet.py,3.8,failed,5,58.06,True,"{""maya"": ""2023""}",no_matching_distribution
+/gists/1526444/snippet.py,3.8,success,1,13.86,True,"{""django"": ""3.1""}",
+/gists/152f15b2dadca9a74039aeab944714af/snippet.py,3.8,failed,5,81.87,True,"{""matplotlib"": ""3.5.1"", ""numpy"": ""1.23.4""}",module_not_found
+/gists/1534135a419bb0b957b9/snippet.py,3.8,failed,5,79.72,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1545255/snippet.py,3.8,failed,5,26.23,True,"{""django"": ""3.2.1"", ""djangorestframework"": ""3.14.2""}",no_matching_distribution
+/gists/1551619/snippet.py,3.8,failed,5,55.96,False,"{""requests"": ""^2.28.2""}",unknown
+/gists/1554441/snippet.py,3.8,failed,5,94.9,False,"{""requests"": ""2.28.1"", ""numpy"": ""1.23.5"", ""pandas"": ""1.5.3""}",unknown
+/gists/1556251/snippet.py,3.8,failed,5,66.83,True,"{""pymongo"": ""4.5.0""}",unknown
+/gists/1558831/snippet.py,3.8,failed,5,43.57,True,"{""vanilla"": ""0.1.1"", ""NudgeCore"": ""0.1.0""}",no_matching_distribution
+/gists/1561144/snippet.py,3.8,failed,5,74.91,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1567224/snippet.py,3.8,failed,5,50.45,False,"{""icone"": ""0.3.0"", ""scrapy"": ""2.5.1""}",no_matching_distribution
+/gists/1572547/snippet.py,3.8,failed,5,47.13,True,"{""google"": ""1.9.3"", ""ndb"": ""0.9.35"", ""simplejson"": ""3.17.5""}",no_matching_distribution
+/gists/1574231/snippet.py,3.8,failed,5,50.22,True,"{""carrot"": ""0.10.7"", ""scrapy"": ""2.7.0"", ""twisted"": ""21.10.0""}",no_matching_distribution
+/gists/1589531/snippet.py,3.8,success,1,14.75,False,{},
+/gists/1590178/snippet.py,3.8,failed,5,74.7,True,"{""wtforms"": ""3.0.1""}",unknown
+/gists/15b3c2a2e9bc7a3c345138a32e029969/snippet.py,3.8,failed,5,127.42,True,"{""gensim"": ""4.0.1"", ""keras"": ""2.11.0"", ""numpy"": ""1.23.4"", ""tensorflow"": ""2.11.0""}",module_not_found
+/gists/15f0772db25343be0bb7072f15992a4e/snippet.py,3.8,success,1,11.91,True,"{""lief"": ""0.13.2""}",
+/gists/1600408/snippet.py,3.8,success,1,21.29,True,"{""pyquery"": ""2.0.1"", ""zope"": ""4.0b1""}",
+/gists/1608287/snippet.py,3.8,failed,5,113.68,False,"{""requests"": ""2.28.1"", ""numpy"": ""1.23.5"", ""pandas"": ""1.5.3""}",unknown
+/gists/160c990c61c5f527445c/snippet.py,3.8,failed,5,52.24,False,"{""bs4"": ""4.11.1"", ""pocket"": ""3.0.0""}",no_matching_distribution
+/gists/1610922/snippet.py,3.8,failed,5,57.37,False,"{""requests"": ""2.28.1""}",no_matching_distribution
+/gists/1628838/snippet.py,3.8,success,1,13.79,True,"{""django"": ""3.1""}",
+/gists/1638546/snippet.py,3.8,failed,5,75.6,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1638695/snippet.py,3.8,failed,5,57.41,False,"{""staticfiles"": ""latest"", ""storages"": ""1.0.0"", ""urlparse"": ""fromstdlib""}",no_matching_distribution
+/gists/1639941/snippet.py,3.8,failed,5,57.86,False,"{""requests"": ""2.28.1""}",no_matching_distribution
+/gists/163f5fdf47ab45d7addd/snippet.py,3.8,failed,5,84.86,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1646117/snippet.py,3.8,failed,5,74.32,False,{},unknown
+/gists/1650115/snippet.py,3.8,failed,5,53.14,True,"{""gobject"": ""0.5.10"", ""gi"": ""0.5.0"", ""gtk"": ""3.24.20""}",no_matching_distribution
+/gists/1650418/snippet.py,3.8,failed,5,56.23,False,"{""requests"": ""^2.28.1""}",unknown
+/gists/1653394/snippet.py,3.8,failed,5,60.77,True,"{""pyramid"": ""1.10.9"", ""webservice"": ""0.3""}",no_matching_distribution
+/gists/166499794efcdfde4d00/snippet.py,3.8,failed,5,89.23,False,"{""requests"": ""2.28.1"", ""beautifulsoup4"": ""4.11.1""}",unknown
+/gists/1676440/snippet.py,3.8,failed,5,73.84,True,"{""pymongo"": ""4.1.0"", ""tornado"": ""6.2.0""}",module_not_found
+/gists/1679110/snippet.py,3.8,failed,5,72.35,False,"{""requests"": ""2.28.1"", ""numpy"": ""1.23.5"", ""pandas"": ""1.5.3""}",no_matching_distribution
+/gists/1685139/snippet.py,3.8,failed,5,75.78,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1685580/snippet.py,3.8,failed,5,52.48,True,"{""flask"": ""2.2.2"", ""flaskext"": ""0.12.0"", ""pyodbc"": ""4.0.30"", ""sqlalchemy"": ""1.4.42""}",no_matching_distribution
+/gists/1688557/snippet.py,3.8,success,1,13.8,True,"{""django"": ""3.1""}",
+/gists/168c9d74b988391e702aac5f4aa69e41/snippet.py,3.8,failed,5,96.34,False,"{""cryptography"": ""3.4.6""}",module_not_found
+/gists/1693769/snippet.py,3.8,failed,5,75.47,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1694496/snippet.py,3.8,failed,5,63.55,False,"{""django"": ""4.2.3"", ""yourapp"": ""1.0.0"", ""settings"": ""1.0.0""}",no_matching_distribution
+/gists/16c0eb09d232461a773c22803a3df35e/snippet.py,3.8,failed,5,47.91,False,"{""dbus"": ""1.14.2"", ""gi"": ""1.2.0""}",no_matching_distribution
+/gists/16ce4914683da30f87d0/snippet.py,3.8,failed,5,78.09,False,"{""requests"": ""2.28.1""}",unknown
+/gists/16e35ed936bab863a29b/snippet.py,3.8,failed,5,56.24,True,"{""maybe"": ""0.1.1"", ""validation"": ""0.8.3""}",unknown
+/gists/1701305/snippet.py,3.8,failed,5,66.13,False,"{""requests"": ""2.28.2""}",no_matching_distribution
+/gists/1701845/snippet.py,3.8,failed,5,60.45,False,"{""clips"": ""6.30.0"", ""django"": ""4.2.1"", ""haystack"": ""3.0.0"", ""tastypie"": ""0.16.4""}",no_matching_distribution
+/gists/1702293/snippet.py,3.8,failed,5,50.4,False,"{""Tastypie"": ""0.15.1""}",no_matching_distribution
+/gists/1705235/snippet.py,3.8,failed,5,157.77,False,"{""IPython"": ""8.0.1"", ""numpy"": ""1.23.5"", ""scikit-learn"": ""1.2.2""}",module_not_found
+/gists/1707483/snippet.py,3.8,success,1,14.54,True,"{""boto"": ""0.3a"", ""django"": ""3.1""}",
+/gists/1710122/snippet.py,3.8,failed,5,58.64,False,"{""flask"": ""2.2.2"", ""werkzeug"": ""2.1.2"", ""memcache"": ""latest"", ""pymemcache"": ""latest""}",version_conflict
+/gists/1714d2952c09b96ba2d8777f1cbf9de1/snippet.py,3.8,failed,5,66.08,False,"{""requests"": ""^2.28.1""}",unknown
+/gists/1715202/snippet.py,3.8,failed,5,69.68,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1716699/snippet.py,3.8,failed,5,52.03,False,"{""Pillow"": ""9.4.0"", ""gi"": ""0.5.2""}",no_matching_distribution
+/gists/1720032/snippet.py,3.8,failed,5,47.76,False,"{""example_package"": ""1.0.0""}",no_matching_distribution
+/gists/1722150/snippet.py,3.8,failed,5,50.98,True,"{""PyQt4"": ""4.11.1"", ""sip"": ""4.20.8""}",no_matching_distribution
+/gists/1722465/snippet.py,3.8,success,1,13.84,True,"{""django"": ""3.1"", ""polib"": ""1.2.0""}",
+/gists/1722663/snippet.py,3.8,failed,5,81.08,True,"{""Pillow"": ""9.0.0""}",module_not_found
+/gists/1727204/snippet.py,3.8,failed,5,51.48,False,"{""haystack"": ""0.10.0"", ""Whoosh"": ""3.0.1""}",no_matching_distribution
+/gists/1728255/snippet.py,3.8,failed,5,47.66,True,"{""gevent"": ""1.5.0"", ""geventwebsocket"": ""1.3.1"", ""pyramid"": ""1.11.1""}",no_matching_distribution
+/gists/173778fd95b9e21afd1aa4ed16bb0694/snippet.py,3.8,failed,5,47.51,False,"{""google-cloud-securitycenter"": ""2.1.1""}",no_matching_distribution
+/gists/174056/snippet.py,3.8,failed,5,69.8,False,"{""requests"": ""2.28.2""}",no_matching_distribution
+/gists/1748a6676120a0aacea2/snippet.py,3.8,success,1,15.19,False,"{""dnspython"": ""2.0.0""}",
+/gists/1752014/snippet.py,3.8,success,3,43.27,True,"{""matplotlib"": ""latest"", ""numpy"": ""1.23.5"", ""psutil"": ""5.8.0""}",no_matching_distribution
+/gists/1757120/snippet.py,3.8,failed,5,89.2,False,"{""arcpy"": ""1.10.0""}",module_not_found
+/gists/1757c55017ef2bfcc070909bdf0e6547/snippet.py,3.8,success,1,14.77,False,{},
+/gists/1760854/snippet.py,3.8,failed,5,74.26,False,{},unknown
+/gists/1761714/snippet.py,3.8,failed,5,75.0,False,"{""requests"": ""2.28.2"", ""pandas"": ""1.4.4"", ""numpy"": ""1.23.5""}",no_matching_distribution
+/gists/1766791/snippet.py,3.8,failed,5,78.02,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1771937/snippet.py,3.8,success,1,23.22,False,"{""django"": ""4.1.1"", ""djangorestframework"": ""3.13.1""}",
+/gists/1773870/snippet.py,3.8,failed,5,74.26,False,{},unknown
+/gists/1776202/snippet.py,3.8,success,1,13.83,True,"{""django"": ""3.1""}",
+/gists/177e37756c833768a21d446cc4921c6e/snippet.py,3.8,failed,5,177.5,True,"{""flask"": ""2.2.2"", ""numpy"": ""1.23.5"", ""six"": ""1.16.0"", ""tensorflow"": ""2.10.0""}",missing_system_dep
+/gists/1780878/snippet.py,3.8,failed,5,120.85,False,"{""requests"": ""2.28.1"", ""numpy"": ""1.23.5"", ""pandas"": ""1.5.3""}",unknown
+/gists/1788517/snippet.py,3.8,failed,5,70.62,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1791644/snippet.py,3.8,failed,5,43.96,False,"{""compressor"": ""latest""}",no_matching_distribution
+/gists/1792428/snippet.py,3.8,failed,5,83.31,True,"{""requests"": ""2.28.1""}",module_not_found
+/gists/1792732/snippet.py,3.8,success,1,15.71,False,{},
+/gists/1795840/snippet.py,3.8,failed,5,77.59,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1805981/snippet.py,3.8,failed,5,74.29,False,{},unknown
+/gists/1808234/snippet.py,3.8,failed,5,62.71,False,"{""pywin32"": ""301""}",no_matching_distribution
+/gists/1810707/snippet.py,3.8,failed,5,57.1,False,"{""requests"": ""2.28.1""}",no_matching_distribution
+/gists/1815146/snippet.py,3.8,failed,5,53.26,True,"{""gi-gtk"": ""3.24.22"", ""PyGObject"": ""3.30.0""}",no_matching_distribution
+/gists/1818351/snippet.py,3.8,success,1,13.82,True,"{""django"": ""3.1""}",
+/gists/1820074/snippet.py,3.8,success,1,14.65,False,{},
+/gists/1820829/snippet.py,3.8,failed,5,82.07,False,"{""jinja2"": ""3.1.2"", ""flask"": ""2.3.2""}",no_matching_distribution
+/gists/1823320/snippet.py,3.8,failed,5,68.28,False,"{""django"": ""4.2.1"", ""registration"": ""2.0.1"", ""django-registration"": ""^2.0.1""}",no_matching_distribution
+/gists/18235723e926be0afbdd/snippet.py,3.8,failed,5,76.25,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1825401/snippet.py,3.8,failed,5,66.03,True,"{""sublime"": ""0.1.0"", ""sublime_plugin"": ""1.0.0""}",module_not_found
+/gists/1835224/snippet.py,3.8,failed,5,78.97,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1844928/snippet.py,3.8,failed,5,65.61,False,"{""requests"": ""2.28.1""}",no_matching_distribution
+/gists/18531dba2bec928424c0/snippet.py,3.8,success,1,29.91,True,"{""pyspark"": ""2.3.2""}",
+/gists/1858252/snippet.py,3.8,success,3,36.63,True,"{""numpy"": ""1.24.4"", ""scipy"": ""1.10.1""}",no_matching_distribution
+/gists/1860715/snippet.py,3.8,failed,5,74.15,False,{},unknown
+/gists/1871929/snippet.py,3.8,failed,5,74.13,False,{},unknown
+/gists/1873692/snippet.py,3.8,failed,5,67.34,False,"{""requests"": ""2.28.2""}",no_matching_distribution
+/gists/1876859/snippet.py,3.8,failed,5,78.75,False,"{""requests"": ""2.28.2""}",unknown
+/gists/1877577/snippet.py,3.8,failed,5,78.23,False,"{""requests"": ""2.28.1""}",unknown
+/gists/187895beb89f0a1b3a54/snippet.py,3.8,success,4,93.12,True,"{""keras"": ""2.11.0"", ""numpy"": ""1.23.5"", ""tensorflow"": ""2.11.0""}",module_not_found
+/gists/1878983/snippet.py,3.8,success,1,63.95,True,"{""twisted"": ""24.3.0""}",
+/gists/1879626/snippet.py,3.8,failed,5,56.87,False,"{""requests"": ""^2.28.1""}",unknown
+/gists/1882562/snippet.py,3.8,success,2,31.18,True,"{""matplotlib"": ""3.5.1"", ""numpy"": ""1.24.0"", ""scipy"": ""1.10.1""}",no_matching_distribution
+/gists/18a73aa5dab4b574e2f5/snippet.py,3.8,success,1,13.82,True,"{""django"": ""3.1""}",
+/gists/18a8e06c2b179bb78353fbacfeee82da/snippet.py,3.8,failed,5,40.21,True,"{""telegram"": ""13.0.0""}",no_matching_distribution
+/gists/18e6b6ed5d69b057e773/snippet.py,3.8,failed,5,51.76,True,"{""workflow"": ""2.1.0""}",unknown
+/gists/1907f96e6e680bbeb15393d4f441b55e/snippet.py,3.8,failed,5,73.67,False,{},unknown
+/gists/1911238/snippet.py,3.8,failed,5,85.37,True,"{""eyed3"": ""0.9.4""}",module_not_found
+/gists/1912053/snippet.py,3.8,failed,5,50.18,True,"{""gtk"": ""3.24.20"", ""pango"": ""1.46.0""}",no_matching_distribution
+/gists/19154831c2049a69e8d53dea8cf3e744/snippet.py,3.8,failed,5,78.58,False,{},unknown
+/gists/1918389/snippet.py,3.8,failed,5,79.68,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1919511/snippet.py,3.8,failed,5,78.51,False,"{""requests"": ""2.28.1""}",unknown
+/gists/191d15e28c39246a2525/snippet.py,3.8,failed,5,56.39,False,"{""requests"": ""^2.28.1""}",unknown
+/gists/1920535/snippet.py,3.8,failed,5,74.22,False,{},unknown
+/gists/1927a29f642593861afc/snippet.py,3.8,failed,5,55.76,False,"{""requests"": ""^2.28.1""}",unknown
+/gists/1928063/snippet.py,3.8,success,1,13.77,True,"{""django"": ""3.1""}",
+/gists/19284bd220165758a0c953ae25108b6b/snippet.py,3.8,failed,5,45.7,True,"{""bpy"": ""3.0.1"", ""mathutils"": ""3.1.2"", ""numpy"": ""1.22.4""}",no_matching_distribution
+/gists/19317d3e4b9a58f2355e7643040d483a/snippet.py,3.8,failed,5,49.58,True,"{""UpdateManager"": ""latest""}",no_matching_distribution
+/gists/1935808/snippet.py,3.8,failed,5,77.81,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1940208/snippet.py,3.8,failed,5,71.23,False,"{""typing"": ""3.11.0"", ""setuptools"": ""66.0.0""}",no_matching_distribution
+/gists/1943426/snippet.py,3.8,failed,5,84.83,True,"{""django"": ""4.1.1""}",unknown
+/gists/1947166/snippet.py,3.8,failed,5,51.81,False,"{""requests"": ""^2.28.1""}",unknown
+/gists/1950267/snippet.py,3.8,failed,5,85.36,True,{},module_not_found
+/gists/1951709/snippet.py,3.8,failed,5,92.31,True,"{""PyQt5"": ""5.15.8""}",module_not_found
+/gists/1969d4648458cf876af92b3507856d70/snippet.py,3.8,failed,5,93.99,False,"{""requests"": ""2.28.1"", ""beautifulsoup4"": ""4.11.1"", ""numpy"": ""1.23.5""}",unknown
+/gists/1971061/snippet.py,3.8,failed,5,46.54,True,"{""flexget"": ""3.11.49"", ""putio"": ""latest""}",no_matching_distribution
+/gists/1997771/snippet.py,3.8,success,1,19.77,False,{},
+/gists/19a4b105d1dff9a591b8/snippet.py,3.8,failed,5,38.01,True,"{""execjs"": ""latest""}",no_matching_distribution
+/gists/19d2397ff8da1952556cf2417d965f6c/snippet.py,3.8,failed,5,77.0,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1a43c785226a06a72872/snippet.py,3.8,failed,5,37.3,True,"{""hexchat"": ""latest""}",no_matching_distribution
+/gists/1ad56b7720af8d706e7f22cbcb8c6d70/snippet.py,3.8,success,4,86.51,True,"{""keras"": ""2.11.0"", ""numpy"": ""1.21.5"", ""tensorflow"": ""2.11.0""}",no_matching_distribution
+/gists/1aefa4509e066690b892/snippet.py,3.8,success,1,18.85,True,"{""keras"": ""0.3.1""}",
+/gists/1b42a20c8f3eb9bb7cb8/snippet.py,3.8,failed,5,65.67,True,"{""PySide6"": ""6.4.0""}",module_not_found
+/gists/1b49c03968b2c83897a4a15c78980b18/snippet.py,3.8,success,2,69.08,True,"{""numpy"": ""1.23.4"", ""progressbar"": ""2.5"", ""torch"": ""1.13.1""}",no_matching_distribution
+/gists/1b94c541ffc158d3e668810b75d69405/snippet.py,3.8,failed,5,50.35,False,"{""dateutil"": ""2.8.1"", ""requests"": ""2.28.2""}",no_matching_distribution
+/gists/1bd64fbbbc07f2a7634bcb9275929dac/snippet.py,3.8,failed,5,46.98,True,"{""idaapi"": ""7.4"", ""idautils"": ""0.11.0""}",no_matching_distribution
+/gists/1c160c9eee91fd44c587/snippet.py,3.8,failed,5,60.45,False,"{""requests"": ""2.28.2"", ""beautifulsoup4"": ""4.11.1""}",unknown
+/gists/1c3176fe9e38dcaadd1e56c2f15c95d9/snippet.py,3.8,failed,5,78.3,True,"{""autodesk_maya"": ""2023.1""}",module_not_found
+/gists/1c48360bde201b3d54ab/snippet.py,3.8,failed,5,71.07,False,{},no_matching_distribution
+/gists/1c9b352ba19b5e33f9c4/snippet.py,3.8,failed,5,56.8,True,"{""xbmc"": ""latest""}",module_not_found
+/gists/1cae669defce037511ada4e0ed01b3cd/snippet.py,3.8,failed,5,51.5,False,"{""PIL"": ""8.2.2"", ""mapproxy"": ""1.0.0""}",no_matching_distribution
+/gists/1cb4d81fed37fd06ef60d08c1181f557/snippet.py,3.8,failed,5,111.86,True,"{""matplotlib"": ""3.5.1"", ""numpy"": ""1.23.5"", ""tensorflow"": ""2.12.0""}",version_conflict
+/gists/1cb65c4b5be2575ea3ab/snippet.py,3.8,failed,5,79.56,False,"{""requests"": ""2.28.2""}",unknown
+/gists/1cd6ce82490d2c0f2e0a/snippet.py,3.8,failed,5,68.73,True,"{""sublime_plugin"": ""0.1.0""}",no_matching_distribution
+/gists/1cec2b3d8aeaaa102e3b/snippet.py,3.8,failed,5,47.53,True,"{""gobject"": ""0.5.0"", ""gtk"": ""3.24.21""}",no_matching_distribution
+/gists/1d08fa7af5ab846211ace2447e1e3e8a/snippet.py,3.8,failed,5,62.71,True,{},no_matching_distribution
+/gists/1d596ca757a541da96ac3caa6f291229/snippet.py,3.8,failed,5,85.37,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1d5b3ad08201b7df48c7f25a169d0021/snippet.py,3.8,success,2,57.58,True,"{""tensorflow"": ""2.12.0""}",no_matching_distribution
+/gists/1d7cb531bb8fff8c228b7710126bcc33/snippet.py,3.8,success,1,15.42,False,"{""PyYAML"": ""6.0""}",
+/gists/1d878d0401b28b281eb75016ed29f2ee/snippet.py,3.8,success,3,70.34,True,"{""keras"": ""2.11.0"", ""numpy"": ""1.23.5"", ""tensorflow"": ""2.11.0""}",module_not_found
+/gists/1da13f548200d9fb2b06/snippet.py,3.8,failed,5,79.99,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1ddc318b4124ed152f6d/snippet.py,3.8,success,1,13.84,True,"{""django"": ""3.1""}",
+/gists/1df6d34cd1b2861eb6b7432ee7245ccd/snippet.py,3.8,failed,5,78.39,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1e1d383fb21841e8f144/snippet.py,3.8,failed,5,227.85,True,"{""matplotlib"": ""3.5.1"", ""numpy"": ""1.23.4"", ""tensorflow"": ""2.13.1""}",module_not_found
+/gists/1e2600ed62d5e76b21ee/snippet.py,3.8,success,1,39.06,False,"{""ggplot"": ""0.10.0"", ""pandas"": ""1.4.3"", ""scikit-learn"": ""1.0.2""}",
+/gists/1e5404260b7e3a8ba4ba0a0d62c0cf75/snippet.py,3.8,success,1,15.82,False,"{""Pillow"": ""9.0.0""}",
+/gists/1e58686b6d5193cbaf30/snippet.py,3.8,failed,5,80.17,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1e7c18c6f6eda87f1cb4995b0e6a22a5/snippet.py,3.8,success,1,51.35,True,"{""torch"": ""1.13.1""}",
+/gists/1e7c794842755683162b/snippet.py,3.8,success,1,15.89,False,{},
+/gists/1e7e3c1da32d00f8ce0dff6b86fd45fe/snippet.py,3.8,success,1,12.62,True,"{""netifaces"": ""0.11.0""}",
+/gists/1e8ab5bcf1a3af2c20de/snippet.py,3.8,success,1,13.91,True,"{""dropbox"": ""12.0.2""}",
+/gists/1ebaeaaa7f7408647fef/snippet.py,3.8,failed,5,49.71,False,"{""pyttsx"": ""2.12.0"", ""speech_recognition"": ""3.9.0""}",no_matching_distribution
+/gists/1ed9763ab4aa98516a7d/snippet.py,3.8,failed,5,84.58,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1f140573b37939e78eb5/snippet.py,3.8,failed,5,103.0,False,"{""cryptography"": ""3.4.6""}",module_not_found
+/gists/1f66e4d58074d64c8268/snippet.py,3.8,failed,5,42.67,False,"{""bs4"": ""4.11.1"", ""img2pdf"": ""1.5.1""}",no_matching_distribution
+/gists/1f8dfb1b5c82627ae3efcfbbadb9f514/snippet.py,3.8,failed,5,49.75,True,"{""io"": ""1.0.0"", ""matplotlib"": ""3.5.1"", ""numpy"": ""1.21.5"", ""tensorflow"": ""2.10.0""}",no_matching_distribution
+/gists/1fa4f3360ffdb1e69507/snippet.py,3.8,failed,5,75.91,False,"{""requests"": ""2.28.1""}",unknown
+/gists/1fe7b9ef3e6108216759/snippet.py,3.8,success,2,28.54,False,{},no_matching_distribution
+/gists/2005165/snippet.py,3.8,failed,5,79.57,False,"{""requests"": ""2.28.1""}",unknown
+/gists/20089f4abf9706d0cdc4/snippet.py,3.8,success,1,30.4,False,"{""numpy"": ""1.23.5"", ""scikit-learn"": ""1.2.2"", ""theano"": ""latest""}",
+/gists/2011426/snippet.py,3.8,success,2,26.87,True,"{""matplotlib"": ""3.5.1"", ""numpy"": ""1.24.1"", ""scipy"": ""1.10.0""}",no_matching_distribution
+/gists/2019037/snippet.py,3.8,failed,5,78.94,False,"{""requests"": ""2.28.1""}",unknown
+/gists/2020955/snippet.py,3.8,failed,5,78.42,False,"{""requests"": ""2.28.1""}",unknown
+/gists/2021781/snippet.py,3.8,success,2,26.1,False,"{""Pillow"": ""9.3.0""}",no_matching_distribution
+/gists/2025129/snippet.py,3.8,success,1,13.88,True,"{""django"": ""3.1""}",
+/gists/2030390/snippet.py,3.8,failed,5,59.65,False,"{""mysqlclient"": ""2.3.12""}",unknown
+/gists/2031484/snippet.py,3.8,failed,5,55.02,False,"{""pysolr"": ""3.0.1"", ""tastypie"": ""0.16.1""}",no_matching_distribution
+/gists/2032428/snippet.py,3.8,failed,5,57.14,True,"{""sublimetext"": ""latest""}",module_not_found
+/gists/2032745/snippet.py,3.8,failed,5,38.67,True,"{""sikuli"": ""1.1.1""}",no_matching_distribution
+/gists/20336/snippet.py,3.8,failed,5,77.57,False,"{""requests"": ""2.28.2""}",unknown
+/gists/2038329/snippet.py,3.8,failed,5,71.81,False,"{""requests"": ""2.28.1""}",unknown
+/gists/204a609ee295c81c3cc202ecbe68752c/snippet.py,3.8,failed,5,50.13,False,"{""PIL"": ""8.3.2"", ""requests"": ""2.28.2"", ""selenium"": ""4.6.0""}",no_matching_distribution
+/gists/2054744/snippet.py,3.8,success,1,13.86,True,"{""django"": ""3.1""}",
+/gists/2061456/snippet.py,3.8,failed,5,72.32,False,"{""numpy"": ""1.23.5"", ""sklearn"": ""1.2.1""}",no_matching_distribution
+/gists/2068759/snippet.py,3.8,failed,5,89.03,True,"{""twisted"": ""24.3.0""}",module_not_found
+/gists/2083178/snippet.py,3.8,failed,5,65.88,False,"{""requests"": ""^2.28.1"", ""beautifulsoup4"": ""4.11.1"", ""numpy"": ""1.23.4""}",unknown
+/gists/20a147e657ee5e8d8666/snippet.py,3.8,failed,5,64.59,True,"{""matplotlib"": ""3.5.1"", ""numpy"": ""1.23.4"", ""pandas"": ""1.5.3"", ""scipy"": ""1.10.1"", ""seaborn"": ""0.13.2"", ""sklearn"": ""1.0.2""}",no_matching_distribution
+/gists/20a36f89546854cc434ecee70522cb8d/snippet.py,3.8,failed,5,61.3,False,"{""Pillow"": ""9.2.0"", ""appex"": ""0.2.0"", ""console"": ""0.9.0"", ""dialogs"": ""0.0.1""}",no_matching_distribution
+/gists/20d90e1f21792a67eb6d27c445aa7a1f/snippet.py,3.8,success,1,15.32,False,"{""PyYAML"": ""5.4.1""}",
+/gists/211868b4f589428d2626/snippet.py,3.8,failed,5,78.01,False,"{""requests"": ""2.28.1""}",unknown
+/gists/2142891/snippet.py,3.8,failed,5,50.95,True,"{""django"": ""3.1"", ""httplib"": ""latest"", ""json"": ""latest""}",no_matching_distribution
+/gists/215101/snippet.py,3.8,failed,5,62.38,False,"{""requests"": ""2.28.2""}",no_matching_distribution
+/gists/2152643/snippet.py,3.8,failed,5,79.41,False,"{""requests"": ""2.28.2""}",unknown
+/gists/215274/snippet.py,3.8,failed,5,77.9,False,"{""requests"": ""2.28.1""}",unknown
+/gists/2172888/snippet.py,3.8,failed,5,74.05,False,{},unknown
+/gists/217bfb7e54c6f75b9b1b2b3d73a1a43a/snippet.py,3.8,failed,5,67.37,False,"{""requests"": ""2.28.2""}",no_matching_distribution
+/gists/2184906/snippet.py,3.8,failed,5,79.33,False,"{""requests"": ""2.28.1"", ""beautifulsoup4"": ""4.11.1""}",unknown
+/gists/2192812/snippet.py,3.8,failed,5,74.47,False,{},unknown
+/gists/21b4442b7e7f36f6a17b/snippet.py,3.8,success,2,33.53,True,"{""numpy"": ""1.23.4"", ""scipy"": ""1.10.1"", ""statsmodels"": ""0.13.4""}",no_matching_distribution
+/gists/21fbffd7a7990f5e066c/snippet.py,3.8,failed,5,79.19,True,"{""app"": ""latest"", ""flask_whooshalchemy"": ""^0.56"", ""Whoosh"": ""3.0.0""}",no_matching_distribution
+/gists/2203822/snippet.py,3.8,failed,5,95.6,False,"{""six"": ""1.16.0""}",unknown
+/gists/220d56ea6fe9a85a4d762128b11adfba/snippet.py,3.8,success,4,75.84,True,"{""matplotlib"": ""3.5.1""}",no_matching_distribution
+/gists/2213915/snippet.py,3.8,failed,5,85.23,False,"{""requests"": ""^2.28.1""}",unknown
+/gists/221685a8e03a01baaf1e/snippet.py,3.8,success,1,16.13,True,"{""nbconvert"": ""7.16.4""}",
+/gists/2205aa857901be69a4186b7a74334a41/snippet.py,3.8,failed,5,141.24,False,"{""matplotlib"": "">=3.7.1"", ""numpy"": ""1.23.5"", ""scikit-learn"": ""1.2.2""}",unknown
+/gists/2288152/snippet.py,3.8,success,1,35.99,False,"{""Pillow"": ""9.4.0""}",
+/gists/2220293/snippet.py,3.8,failed,5,119.84,False,"{""requests"": ""2.28.2""}",unknown
+/gists/2229985/snippet.py,3.8,failed,5,129.52,True,"{""asyncmongo"": ""1.4.0"", ""tornado"": ""6.2.0""}",no_matching_distribution
+/gists/2232681/snippet.py,3.8,failed,5,138.11,True,"{""PyQt4"": ""4.10.3"", ""PyKDE4"": ""4.14.16""}",no_matching_distribution
+/gists/2245426/snippet.py,3.8,failed,5,144.65,True,"{""flask"": ""2.2.2"", ""pymongo"": ""3.12.1""}",unknown
+/gists/228998/snippet.py,3.8,failed,5,129.02,False,"{""requests"": ""2.28.2""}",unknown
+/gists/2280363/snippet.py,3.8,failed,5,172.0,False,"{""requests"": ""2.28.1""}",unknown
+/gists/22935c16da4eda92762f/snippet.py,3.8,failed,5,63.71,True,"{""PyQt5"": ""5.15.8"", ""qgis"": ""3.24.2""}",no_matching_distribution
+/gists/2301119/snippet.py,3.8,failed,5,82.46,False,"{""requests"": ""2.28.1"", ""beautifulsoup4"": ""4.11.1""}",unknown
+/gists/2310005/snippet.py,3.8,failed,5,83.05,False,"{""requests"": ""2.28.1"", ""beautifulsoup4"": ""4.11.1""}",unknown

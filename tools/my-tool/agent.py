@@ -307,7 +307,7 @@ def record_success_node(state: AgentState) -> dict:
         packages=state.get("requirements", {}),
         python_version=state["python_version"],
     )
-    return {}   # no state change needed
+    return {"status": "success"}   # no state change needed
 
 
 # ---------------------------------------------------------------------------

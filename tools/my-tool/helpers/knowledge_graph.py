@@ -125,7 +125,17 @@ def build_db(result_dirs: list = RESULT_DIRS, db_path: str = DEFAULT_DB_PATH) ->
                         if not isinstance(item, dict):
                             continue
                         if "python_module" in item:
-                            modules_dict = item["python_module"] or {}
+                            raw = item["python_module"] or {}
+                            # The YAML stores python_module as a Python dict
+                            # literal string e.g. "{'numpy': '1.24.4', ...}"
+                            # rather than real YAML — parse it with ast.literal_eval
+                            if isinstance(raw, str):
+                                try:
+                                    import ast
+                                    raw = ast.literal_eval(raw)
+                                except Exception:
+                                    raw = {}
+                            modules_dict = raw if isinstance(raw, dict) else {}
                         if "error_type" in item:
                             error_type = item["error_type"]
 

@@ -17,11 +17,12 @@ services:
       - pllm-network
 
     volumes:
-      # Docker-in-Docker: mount the host's Docker socket
       - /var/run/docker.sock:/var/run/docker.sock:rw
-      # Mount the gists dataset (two directories up from tools/my_tool/)
       - ../../hard-gists:/gists:rw
-
+      - ../../pllm_results:/gists/pllm_results:ro
+      - ../../pyego-results:/gists/pyego-results:ro
+      - ../../readpy-results:/gists/readpy-results:ro
+    
     working_dir: /app
 
     stdin_open: true
@@ -29,16 +30,6 @@ services:
 
     environment:
       - DOCKER_HOST=unix:///var/run/docker.sock
-
-  # Share the same Ollama service as PLLM (both on the same network)
-  ollama:
-    image: ollama/ollama:latest
-    container_name: ollama
-    restart: unless-stopped
-    networks:
-      - pllm-network
-    ports:
-      - "11434:11434"
 
 networks:
   pllm-network:
