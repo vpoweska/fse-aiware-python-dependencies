@@ -34,14 +34,14 @@ services:
       - DOCKER_HOST=unix:///var/run/docker.sock
       - KG_DB_PATH=/app/kg/knowledge_graph.db
 
-  ollama:
-    image: ollama/ollama:latest
-    container_name: ollama-our-tool
-    restart: unless-stopped
-    networks:
-      - pllm-network
-    volumes:
-      - ollama-data:/root/.ollama
+    #ollama:
+    #image: ollama/ollama:latest
+    #container_name: ollama-our-tool
+    #restart: unless-stopped
+    #networks:
+    #  - pllm-network
+    #volumes:
+    #  - ollama-data:/root/.ollama
 
 networks:
   pllm-network:
