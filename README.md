@@ -9,7 +9,7 @@
 
 ## Setup
 
-### 1. Clone the repo !!!(Make sure you are within Jessica Branch)!!!
+### 1. Clone the repo
 
 ```bash
 git clone https://github.com/vpoweska/fse-aiware-python-dependencies.git
@@ -24,10 +24,10 @@ Extract hard-gists.tar.gz
 
 ```bash
 ollama pull gemma2
-ollama serve
+OLLAMA_HOST=0.0.0.0:11437 ollama serve &
 ```
 
-### 4. Start the containers
+### 4. Open a new terminal and start the container
 
 ```bash
 cd tools/our_tool
@@ -48,7 +48,7 @@ docker exec -it enhanced-resolver-test python helpers/build_solution_db_v2.py
 docker exec -it enhanced-resolver-test python run_all.py \
   -g '/gists' \
   -m 'gemma2' \
-  -b 'http://ollama-our-tool:11434' \
+  -b 'http://172.18.0.1:11437/' \
   -l 5 \
   -r 0
 ```
@@ -59,7 +59,7 @@ docker exec -it enhanced-resolver-test python run_all.py \
 docker exec -it enhanced-resolver-test python run_all.py \
   -g '/gists' \
   -m 'gemma2' \
-  -b 'http://ollama-our-tool:11434' \
+  -b 'http://172.18.0.1:11437/' \
   -l 5 \
   -r 0 \
   --limit 50
@@ -71,7 +71,7 @@ docker exec -it enhanced-resolver-test python run_all.py \
 docker exec -it enhanced-resolver-test python test_executor.py \
   -f '/gists/SNIPPET_ID/snippet.py' \
   -m 'gemma2' \
-  -b 'http://ollama-our-tool:11434' \
+  -b 'http://172.18.0.1:11437/' \
   -l 5 \
   -r 0
 ```
@@ -82,7 +82,7 @@ docker exec -it enhanced-resolver-test python test_executor.py \
 docker exec -it enhanced-resolver-test python run_all.py \
   -g '/gists' \
   -m 'gemma2' \
-  -b 'http://ollama-our-tool:11434' \
+  -b 'http://172.18.0.1:11437/' \
   -l 5 \
   -r 0 \
   --start-from SNIPPET_ID
