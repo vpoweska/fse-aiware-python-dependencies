@@ -1,0 +1,52 @@
+version: '3.8'
+services:
+  enhanced-resolver:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        UNAME: ${USER:-appuser}
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+        DOCKER_GID: ${DOCKER_GID:-999}
+
+    image: enhanced-resolver:latest
+    container_name: enhanced-resolver-test
+
+    networks:
+      - pllm-network
+
+    volumes:
+      - .:/app:rw
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - ../../hard-gists:/gists:rw
+      - ../../pllm_results:/app/pllm_results_data:ro
+      - ../../pyego-results:/app/pyego_results_data:ro
+      - ../../readpy-results:/app/readpy_results_data:ro
+      - kg-data:/app/kg
+
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    entrypoint: /bin/bash
+
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - KG_DB_PATH=/app/kg/knowledge_graph.db
+
+    #ollama:
+    #image: ollama/ollama:latest
+    #container_name: ollama-our-tool
+    #restart: unless-stopped
+    #networks:
+    #  - pllm-network
+    #volumes:
+    #  - ollama-data:/root/.ollama
+
+networks:
+  pllm-network:
+    driver: bridge
+
+volumes:
+  kg-data:
+  ollama-data:
